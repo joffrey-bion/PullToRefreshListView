@@ -17,9 +17,9 @@ import android.widget.BaseAdapter;
 import android.widget.Toast;
 
 import com.jbion.android.pulltorefresh.widget.PullToRefreshListView;
-import com.jbion.android.pulltorefresh.widget.PullableListView;
+import com.jbion.android.pulltorefresh.widget.PullToLoadListView;
 import com.jbion.android.pulltorefresh.widget.PullToRefreshListView.OnRefreshListener;
-import com.jbion.android.pulltorefresh.widget.PullableListView.OnPulledUpListener;
+import com.jbion.android.pulltorefresh.widget.PullToLoadListView.OnLoadMoreListener;
 
 public class PullableListActivity extends ListActivity {
 
@@ -43,7 +43,7 @@ public class PullableListActivity extends ListActivity {
 		setContentView(R.layout.list_layout);
 
 		mListItems = new LinkedList<String>();
-		addNames(oldest, newest, true);
+		addNewNames(oldest, newest);
 
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, mListItems);
@@ -83,14 +83,15 @@ public class PullableListActivity extends ListActivity {
 			}
 		});
 
-		if (ptr instanceof PullableListView) {
-			((PullableListView) ptr).setOnPulledUpListener(new OnPulledUpListener() {
+		if (ptr instanceof PullToLoadListView) {
+			((PullToLoadListView) ptr).setOnLoadMoreListener(new OnLoadMoreListener() {
 				@Override
-				public void onPulledUp() {
+				public void onLoadMore() {
 					new LoadBottomDataTask().execute();
 				}
 			});
 		}
+		
 	}
 
 	private static void timer() {
@@ -101,15 +102,20 @@ public class PullableListActivity extends ListActivity {
 		}
 	}
 
-	private List<String> addNames(int from, int to, boolean reverse) {
+	private List<String> addNewNames(int from, int to) {
 		int min = Math.max(from, MIN);
 		int max = Math.min(to, MAX);
 		for (int i = min; i < max; i++) {
-			if (reverse) {
-				mListItems.addFirst(BASE_NAME + i);
-			} else {
-				mListItems.add(BASE_NAME + i);
-			}
+			mListItems.addFirst(BASE_NAME + i);
+		}
+		return mListItems;
+	}
+
+	private List<String> addOldNames(int from, int to) {
+		int min = Math.max(from, MIN);
+		int max = Math.min(to, MAX);
+		for (int i = max - 1; i >= min; i--) {
+			mListItems.add(BASE_NAME + i);
 		}
 		return mListItems;
 	}
@@ -121,7 +127,7 @@ public class PullableListActivity extends ListActivity {
 				return null;
 			}
 			timer();
-			addNames(oldest - DEC, oldest, false);
+			addOldNames(oldest - DEC, oldest);
 			oldest -= DEC;
 			return null;
 		}
@@ -131,14 +137,14 @@ public class PullableListActivity extends ListActivity {
 			// We need notify the adapter that the data have been changed
 			((BaseAdapter) getListAdapter()).notifyDataSetChanged();
 			// Call onLoadMoreComplete when the LoadMore task, has finished
-			((PullableListView) getListView()).onPulledUpHandled();
+			((PullToLoadListView) getListView()).onLoadingComplete();
 			super.onPostExecute(result);
 		}
 
 		@Override
 		protected void onCancelled() {
 			// Notify the loading more operation has finished
-			((PullableListView) getListView()).onPulledUpHandled();
+			((PullToLoadListView) getListView()).onLoadingComplete();
 		}
 	}
 
@@ -149,7 +155,7 @@ public class PullableListActivity extends ListActivity {
 				return null;
 			}
 			timer();
-			addNames(newest, newest + INC, true);
+			addNewNames(newest, newest + INC);
 			newest += INC;
 			return null;
 		}

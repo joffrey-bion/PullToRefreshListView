@@ -271,6 +271,7 @@ public class PullToRefreshListView extends ListView {
 
 	/**
 	 * Allows the using class to enable/disable the pull-to-refresh functionality.
+	 * Default is enabled.
 	 * 
 	 * @param enabled
 	 *            if {@code false} the list will behave as a standard
@@ -341,10 +342,10 @@ public class PullToRefreshListView extends ListView {
 	 */
 	public void showLastUpdatedText(boolean show) {
 		this.showLastUpdatedText = show;
-		if (!show) {
-			lastUpdatedTextView.setVisibility(View.GONE);
-		} else {
+		if (state == State.PULL_TO_REFRESH && show && lastUpdated != -1) {
 			lastUpdatedTextView.setVisibility(View.VISIBLE);
+		} else {
+			lastUpdatedTextView.setVisibility(View.GONE);
 		}
 	}
 
@@ -488,23 +489,30 @@ public class PullToRefreshListView extends ListView {
 					break;
 				}
 				// not pulling anymore
-				setPullingOnHeader(false);
+				pullingOnHeader = false;
+				unhideScrollBar();
+				Log.v(LOG_TAG, "Header released");
 			}
 			break;
 
 		case MotionEvent.ACTION_CANCEL:
-			setPullingOnHeader(false);
+			pullingOnHeader = false;
+			unhideScrollBar();
+			Log.v(LOG_TAG, "Header pull canceled");
 			break;
 
 		case MotionEvent.ACTION_MOVE:
 			if (getFirstVisiblePosition() > HEADER_POSITION) {
 				// header not visible
-				setPullingOnHeader(false);
+				pullingOnHeader = false;
+				unhideScrollBar();
 			} else if (!isPullingOnHeader()) {
 				// header just got visible
-				setPullingOnHeader(true);
+				pullingOnHeader = true;
+				hideScrollBarTemporarily();
 				// remember starting position for pull distance
 				pullOrigin = event.getY();
+				Log.v(LOG_TAG, "Start pulling on header");
 			}
 
 			if (isPullingOnHeader()) {
@@ -522,13 +530,13 @@ public class PullToRefreshListView extends ListView {
 
 					if (state == State.PULL_TO_REFRESH && headerTopMargin > pullThreshold) {
 						// header pulled beyond the threshold
-						Log.v(LOG_TAG, "Further pull threshold");
+						Log.v(LOG_TAG, "Pull threshold exceeded");
 						setState(State.RELEASE_TO_REFRESH);
 						image.clearAnimation();
 						image.startAnimation(flipAnimation);
 					} else if (state == State.RELEASE_TO_REFRESH && headerTopMargin < pullThreshold) {
 						// header pushed back below the threshold
-						Log.v(LOG_TAG, "Small pull threshold");
+						Log.v(LOG_TAG, "Push back threshold");
 						setState(State.PULL_TO_REFRESH);
 						image.clearAnimation();
 						image.startAnimation(reverseFlipAnimation);
@@ -559,20 +567,6 @@ public class PullToRefreshListView extends ListView {
 
 	private boolean isPullingOnHeader() {
 		return pullingOnHeader;
-	}
-
-	private void setPullingOnHeader(boolean pulling) {
-		if (pulling && !isPullingOnHeader()) {
-			Log.v(LOG_TAG, "Started pulling on header");
-		} else if (!pulling && isPullingOnHeader()) {
-			Log.v(LOG_TAG, "Stopped pulling on header");
-		}
-		pullingOnHeader = pulling;
-		if (pulling) {
-			hideScrollBarTemporarily();
-		} else {
-			unhideScrollBar();
-		}
 	}
 
 	/**
@@ -641,7 +635,6 @@ public class PullToRefreshListView extends ListView {
 	@Override
 	protected void onScrollChanged(int l, int t, int oldl, int oldt) {
 		super.onScrollChanged(l, t, oldl, oldt);
-
 		if (!hasResetHeader) {
 			if (measuredHeaderHeight > 0 && state != State.REFRESHING) {
 				setHeaderMargin(-measuredHeaderHeight);
