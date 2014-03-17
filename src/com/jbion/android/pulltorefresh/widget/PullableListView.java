@@ -1,4 +1,6 @@
-package com.joffrey_bion.testpulltorefresh.widget;
+package com.jbion.android.pulltorefresh.widget;
+
+import com.jbion.android.pulltorefresh.R;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -10,7 +12,6 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-import com.joffrey_bion.testpulltorefresh.R;
 
 public class PullableListView extends PullToRefreshListView implements OnScrollListener {
 

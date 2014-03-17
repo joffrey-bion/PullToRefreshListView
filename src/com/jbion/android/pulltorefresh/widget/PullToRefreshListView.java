@@ -1,7 +1,9 @@
-package com.joffrey_bion.testpulltorefresh.widget;
+package com.jbion.android.pulltorefresh.widget;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import com.jbion.android.pulltorefresh.R;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -22,8 +24,6 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.joffrey_bion.testpulltorefresh.R;
 
 /**
  * A customizable Android {@code ListView} implementation that has 'Pull to Refresh'
@@ -92,14 +92,17 @@ public class PullToRefreshListView extends ListView {
 	 * User settings
 	 */
 
+	/** Whether the pull-to-refresh functionality is enabled. */
+	protected boolean ptrEnabled = true;
+
 	private OnItemClickListener onItemClickListener;
 	private OnItemLongClickListener onItemLongClickListener;
 	private OnRefreshListener onRefreshListener;
 
-	private String pullToRefreshText;
-	private String releaseToRefreshText;
-	private String refreshingText;
-	private String lastUpdatedText;
+	private String pullToRefreshText = "Pull to refresh";
+	private String releaseToRefreshText = "Release to refresh";
+	private String refreshingText = "Loading…";
+	private String lastUpdatedText = "Updated: %1$s";
 
 	private java.text.DateFormat lastUpdatedDateFormat = SimpleDateFormat.getDateTimeInstance();
 
@@ -133,7 +136,7 @@ public class PullToRefreshListView extends ListView {
 	private boolean scrollbarHidden = false;
 
 	private boolean pullingOnHeader;
-	private float firstY;
+	private float pullOrigin;
 	private int headerTopMargin;
 
 	private boolean resetAfterAnimation;
@@ -143,20 +146,14 @@ public class PullToRefreshListView extends ListView {
 	{
 		setVerticalFadingEdgeEnabled(false);
 
-		// default text initialization
-		pullToRefreshText = getContext().getString(R.string.ptr_pull_to_refresh);
-		releaseToRefreshText = getContext().getString(R.string.ptr_release_to_refresh);
-		refreshingText = getContext().getString(R.string.ptr_refreshing);
-		lastUpdatedText = getContext().getString(R.string.ptr_last_updated);
-
-		// arrow rotation animation
+		// arrow counter-clockwise rotation animation
 		flipAnimation = new RotateAnimation(0, -180, RotateAnimation.RELATIVE_TO_SELF, 0.5f,
 				RotateAnimation.RELATIVE_TO_SELF, 0.5f);
 		flipAnimation.setInterpolator(new LinearInterpolator());
 		flipAnimation.setDuration(ROTATE_ARROW_ANIMATION_DURATION);
 		flipAnimation.setFillAfter(true);
 
-		// arrow rotation animation
+		// arrow clockwise rotation animation
 		reverseFlipAnimation = new RotateAnimation(-180, 0, RotateAnimation.RELATIVE_TO_SELF, 0.5f,
 				RotateAnimation.RELATIVE_TO_SELF, 0.5f);
 		reverseFlipAnimation.setInterpolator(new LinearInterpolator());
@@ -167,15 +164,14 @@ public class PullToRefreshListView extends ListView {
 		scrollbarEnabled = super.isVerticalScrollBarEnabled();
 
 		// header initialization
-		headerContainer = LayoutInflater.from(getContext()).inflate(
-				R.layout.ptr_header, null);
+		headerContainer = LayoutInflater.from(getContext()).inflate(R.layout.ptr_header, null);
 		header = headerContainer.findViewById(R.id.ptr_id_header);
 		text = (TextView) headerContainer.findViewById(R.id.ptr_id_text);
 		image = (ImageView) headerContainer.findViewById(R.id.ptr_id_image);
 		spinner = headerContainer.findViewById(R.id.ptr_id_spinner);
 		lastUpdatedTextView = (TextView) headerContainer.findViewById(R.id.ptr_id_last_updated);
-
 		addHeaderView(headerContainer);
+
 		setState(State.PULL_TO_REFRESH);
 
 		ViewTreeObserver vto = header.getViewTreeObserver();
@@ -272,6 +268,17 @@ public class PullToRefreshListView extends ListView {
 	/*
 	 * USING CLASS PREFERENCES
 	 */
+
+	/**
+	 * Allows the using class to enable/disable the pull-to-refresh functionality.
+	 * 
+	 * @param enabled
+	 *            if {@code false} the list will behave as a standard
+	 *            {@link ListView}.
+	 */
+	public void setPullToRefreshEnabled(boolean enabled) {
+		ptrEnabled = enabled;
+	}
 
 	/**
 	 * Sets the text to display when the user has not pulled enough yet to trigger
@@ -448,6 +455,9 @@ public class PullToRefreshListView extends ListView {
 	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
+		if (!ptrEnabled) {
+			return super.onTouchEvent(event);
+		}
 		if (lockScrollWhileRefreshing
 				&& (state == State.REFRESHING || getAnimation() != null
 						&& !getAnimation().hasEnded())) {
@@ -461,7 +471,6 @@ public class PullToRefreshListView extends ListView {
 				switch (state) {
 				case RELEASE_TO_REFRESH:
 					// pulled enough, refresh!
-					lastUpdated = System.currentTimeMillis();
 					if (onRefreshListener == null) {
 						// no loading to do
 						pushHeaderBackAndReset();
@@ -495,13 +504,13 @@ public class PullToRefreshListView extends ListView {
 				// header just got visible
 				setPullingOnHeader(true);
 				// remember starting position for pull distance
-				firstY = event.getY();
+				pullOrigin = event.getY();
 			}
 
 			if (isPullingOnHeader()) {
 				// retrieve pull distance since pull start
 				float absoluteY = event.getY();
-				float relativeY = absoluteY - firstY;
+				float relativeY = absoluteY - pullOrigin;
 				relativeY /= PULL_RESISTANCE;
 
 				int newHeaderMargin = Math.max(Math.round(relativeY) - header.getHeight(),
@@ -606,7 +615,7 @@ public class PullToRefreshListView extends ListView {
 		bounceAnimation.setFillAfter(false);
 		bounceAnimation.setFillBefore(true);
 		bounceAnimation.setInterpolator(new OvershootInterpolator(BOUNCE_OVERSHOOT_TENSION));
-		bounceAnimation.setAnimationListener(new HeaderAnimationListener(yTranslate));
+		bounceAnimation.setAnimationListener(new ListAnimationListener(yTranslate));
 		startAnimation(bounceAnimation);
 	}
 
@@ -642,14 +651,14 @@ public class PullToRefreshListView extends ListView {
 	}
 
 	/**
-	 * TODO doc
+	 * Listens to global list animations. Hides the scrollbar during the animations.
 	 */
-	private class HeaderAnimationListener implements AnimationListener {
+	private class ListAnimationListener implements AnimationListener {
 
 		private int height, translation;
 		private State stateAtAnimationStart;
 
-		public HeaderAnimationListener(int translation) {
+		public ListAnimationListener(int translation) {
 			this.translation = translation;
 		}
 

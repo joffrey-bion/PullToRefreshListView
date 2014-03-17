@@ -1,4 +1,4 @@
-package com.joffrey_bion.testpulltorefresh;
+package com.jbion.android.pulltorefresh;
 
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
@@ -16,10 +16,10 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Toast;
 
-import com.joffrey_bion.testpulltorefresh.widget.PullToRefreshListView;
-import com.joffrey_bion.testpulltorefresh.widget.PullToRefreshListView.OnRefreshListener;
-import com.joffrey_bion.testpulltorefresh.widget.PullableListView;
-import com.joffrey_bion.testpulltorefresh.widget.PullableListView.OnPulledUpListener;
+import com.jbion.android.pulltorefresh.widget.PullToRefreshListView;
+import com.jbion.android.pulltorefresh.widget.PullableListView;
+import com.jbion.android.pulltorefresh.widget.PullToRefreshListView.OnRefreshListener;
+import com.jbion.android.pulltorefresh.widget.PullableListView.OnPulledUpListener;
 
 public class PullableListActivity extends ListActivity {
 
@@ -71,6 +71,7 @@ public class PullableListActivity extends ListActivity {
 
 	private void setRefreshListeners() {
 		final PullToRefreshListView ptr = (PullToRefreshListView) getListView();
+		ptr.setPullToRefreshEnabled(true);
 		ptr.setLockScrollWhileRefreshing(false);
 		ptr.showLastUpdatedText(true);
 		ptr.setLastUpdatedDateFormat(new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()));
