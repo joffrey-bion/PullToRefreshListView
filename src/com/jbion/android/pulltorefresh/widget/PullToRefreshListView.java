@@ -57,7 +57,6 @@ public class PullToRefreshListView extends ListView {
 	private static final int ROTATE_ARROW_ANIMATION_DURATION = 250;
 	/** Duration of the animation to send the header back to the top (when released). */
 	private static final int BOUNCE_ANIMATION_DURATION = 500;
-	private static final int BOUNCE_ANIMATION_DELAY = 100;
 
 	/**
 	 * The current 0 value disables overshoot when bouncing the header back. It could
@@ -140,7 +139,6 @@ public class PullToRefreshListView extends ListView {
 	private float pullOrigin;
 	private int headerTopMargin;
 
-	private boolean resetAfterAnimation;
 	private boolean hasResetHeader;
 	private long lastUpdated = -1;
 
@@ -165,7 +163,8 @@ public class PullToRefreshListView extends ListView {
 		scrollbarEnabled = super.isVerticalScrollBarEnabled();
 
 		// header initialization
-		headerContainer = LayoutInflater.from(getContext()).inflate(R.layout.pull_to_refresh_header, null);
+		headerContainer = LayoutInflater.from(getContext()).inflate(
+				R.layout.pull_to_refresh_header, null);
 		header = headerContainer.findViewById(R.id.ptr_id_header);
 		text = (TextView) headerContainer.findViewById(R.id.ptr_id_text);
 		image = (ImageView) headerContainer.findViewById(R.id.ptr_id_image);
@@ -206,7 +205,8 @@ public class PullToRefreshListView extends ListView {
 	}
 
 	/**
-	 * Activate an OnPullToRefreshListener to get notified on 'pull to refresh' events.
+	 * Activate an OnPullToRefreshListener to get notified on 'pull to refresh'
+	 * events.
 	 * 
 	 * @param onRefreshListener
 	 *            The OnPullToRefreshListener to get notified
@@ -240,7 +240,7 @@ public class PullToRefreshListView extends ListView {
 	 */
 	public void onRefreshComplete() {
 		state = State.PULL_TO_REFRESH;
-		pushHeaderBackAndReset();
+		pushHeaderBack(true);
 		lastUpdated = System.currentTimeMillis();
 	}
 
@@ -475,16 +475,16 @@ public class PullToRefreshListView extends ListView {
 					// pulled enough, refresh!
 					if (onRefreshListener == null) {
 						// no loading to do
-						pushHeaderBackAndReset();
+						pushHeaderBack(true);
 					} else {
 						setState(State.REFRESHING);
 						onRefreshListener.onPullToRefresh();
-						pushHeaderBack(refreshingHeaderEnabled);
+						pushHeaderBack(!refreshingHeaderEnabled);
 					}
 					break;
 				case PULL_TO_REFRESH:
 					// not pulled enough, push header back
-					pushHeaderBackAndReset();
+					pushHeaderBack(true);
 					break;
 				default:
 					break;
@@ -594,14 +594,25 @@ public class PullToRefreshListView extends ListView {
 	}
 
 	/**
-	 * Starts an animation to push the header back to the top. If the state is
-	 * {@link State#REFRESHING} and the using class didn't disable the refreshing
-	 * display, the header is not pushed all the way back, but left visible while
-	 * refreshing.
+	 * Starts an animation to push the header back to the top.
+	 * 
+	 * @param allTheWayAndReset
+	 *            If {@code true}, the header will be pushed all the way to the top
+	 *            (so that it is hidden) and reset. If {@code false}, only the margin
+	 *            will be removed and the header will still be visible (and not
+	 *            reset).
 	 */
-	private void pushHeaderBack(boolean keepVisible) {
-		int yTranslate = keepVisible ? header.getHeight() - headerContainer.getHeight()
-				: -headerContainer.getHeight() - headerContainer.getTop() + getPaddingTop();
+	private void pushHeaderBack(boolean allTheWayAndReset) {
+		if (getFirstVisiblePosition() > 0) {
+			// header not visible, no animation needed
+			if (allTheWayAndReset) {
+				resetHeader();
+			}
+			return;
+		}
+		int yTranslate = allTheWayAndReset ? -headerContainer.getHeight()
+				- headerContainer.getTop() + getPaddingTop() : header.getHeight()
+				- headerContainer.getHeight();
 		TranslateAnimation bounceAnimation = new TranslateAnimation(TranslateAnimation.ABSOLUTE, 0,
 				TranslateAnimation.ABSOLUTE, 0, TranslateAnimation.ABSOLUTE, 0,
 				TranslateAnimation.ABSOLUTE, yTranslate);
@@ -610,26 +621,9 @@ public class PullToRefreshListView extends ListView {
 		bounceAnimation.setFillAfter(false);
 		bounceAnimation.setFillBefore(true);
 		bounceAnimation.setInterpolator(new OvershootInterpolator(BOUNCE_OVERSHOOT_TENSION));
-		bounceAnimation.setAnimationListener(new ListAnimationListener(yTranslate));
+		bounceAnimation.setAnimationListener(new ListAnimationListener(yTranslate,
+				allTheWayAndReset));
 		startAnimation(bounceAnimation);
-	}
-
-	/**
-	 * Resets the header to its idle, invisible state. If the header is currently
-	 * visible, this method first animates the header to hide it before resetting it.
-	 */
-	private void pushHeaderBackAndReset() {
-		if (getFirstVisiblePosition() > 0) {
-			// header not visible, no animation needed
-			resetHeader();
-		} else {
-			// push header back, then reset
-			if (getAnimation() != null && !getAnimation().hasEnded()) {
-				resetAfterAnimation = true;
-			} else {
-				pushHeaderBack(false);
-			}
-		}
 	}
 
 	/**
@@ -638,6 +632,7 @@ public class PullToRefreshListView extends ListView {
 	private void resetHeader() {
 		setHeaderMargin(-header.getHeight());
 		setState(State.PULL_TO_REFRESH);
+		image.clearAnimation();
 	}
 
 	@Override
@@ -653,14 +648,17 @@ public class PullToRefreshListView extends ListView {
 
 	/**
 	 * Listens to global list animations. Hides the scrollbar during the animations.
+	 * Allows to run some code at the end of the animation.
 	 */
 	private class ListAnimationListener implements AnimationListener {
 
 		private int height, translation;
 		private State stateAtAnimationStart;
+		private boolean resetAfterAnimation;
 
-		public ListAnimationListener(int translation) {
+		public ListAnimationListener(int translation, boolean resetAfterAnimation) {
 			this.translation = translation;
+			this.resetAfterAnimation = resetAfterAnimation;
 		}
 
 		@Override
@@ -682,7 +680,6 @@ public class PullToRefreshListView extends ListView {
 			setHeaderMargin(stateAtAnimationStart == State.REFRESHING && refreshingHeaderEnabled ? 0
 					: -measuredHeaderHeight - headerContainer.getTop());
 
-			//setSelection(HEADER_POSITION);
 			setSelection(FIRST_ITEM_POSITION);
 
 			// restore this ListView's height
@@ -693,15 +690,7 @@ public class PullToRefreshListView extends ListView {
 			unhideScrollBar();
 
 			if (resetAfterAnimation) {
-				resetAfterAnimation = false;
-				postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						resetHeader();
-					}
-				}, BOUNCE_ANIMATION_DELAY);
-			} else if (stateAtAnimationStart != State.REFRESHING) {
-				setState(State.PULL_TO_REFRESH);
+				resetHeader();
 			}
 		}
 

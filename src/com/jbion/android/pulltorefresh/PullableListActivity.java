@@ -72,6 +72,7 @@ public class PullableListActivity extends ListActivity {
 	private void setRefreshListeners() {
 		final PullToRefreshListView ptr = (PullToRefreshListView) getListView();
 		ptr.setPullToRefreshEnabled(true);
+		ptr.setRefreshingHeaderEnabled(false);
 		ptr.setLockScrollWhileRefreshing(false);
 		ptr.showLastUpdatedText(true);
 		ptr.setLastUpdatedDateFormat(new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()));
