@@ -66,6 +66,7 @@ public class PullToRefreshListView extends ListView {
 	private static final float BOUNCE_OVERSHOOT_TENSION = 0f;
 
 	private static final int HEADER_POSITION = 0;
+	private static final int FIRST_ITEM_POSITION = 1;
 
 	/**
 	 * Interface to implement when you want to get notified of 'pull to refresh'
@@ -128,8 +129,8 @@ public class PullToRefreshListView extends ListView {
 
 	protected State state;
 
-	private RotateAnimation flipAnimation;
-	private RotateAnimation reverseFlipAnimation;
+	private RotateAnimation ccwRotation;
+	private RotateAnimation cwRotation;
 
 	private int measuredHeaderHeight;
 	private boolean scrollbarEnabled;
@@ -146,19 +147,19 @@ public class PullToRefreshListView extends ListView {
 	{
 		setVerticalFadingEdgeEnabled(false);
 
-		// arrow counter-clockwise rotation animation
-		flipAnimation = new RotateAnimation(0, -180, RotateAnimation.RELATIVE_TO_SELF, 0.5f,
+		// arrow counterclockwise rotation animation
+		ccwRotation = new RotateAnimation(0, -180, RotateAnimation.RELATIVE_TO_SELF, 0.5f,
 				RotateAnimation.RELATIVE_TO_SELF, 0.5f);
-		flipAnimation.setInterpolator(new LinearInterpolator());
-		flipAnimation.setDuration(ROTATE_ARROW_ANIMATION_DURATION);
-		flipAnimation.setFillAfter(true);
+		ccwRotation.setInterpolator(new LinearInterpolator());
+		ccwRotation.setDuration(ROTATE_ARROW_ANIMATION_DURATION);
+		ccwRotation.setFillAfter(true);
 
 		// arrow clockwise rotation animation
-		reverseFlipAnimation = new RotateAnimation(-180, 0, RotateAnimation.RELATIVE_TO_SELF, 0.5f,
+		cwRotation = new RotateAnimation(-180, 0, RotateAnimation.RELATIVE_TO_SELF, 0.5f,
 				RotateAnimation.RELATIVE_TO_SELF, 0.5f);
-		reverseFlipAnimation.setInterpolator(new LinearInterpolator());
-		reverseFlipAnimation.setDuration(ROTATE_ARROW_ANIMATION_DURATION);
-		reverseFlipAnimation.setFillAfter(true);
+		cwRotation.setInterpolator(new LinearInterpolator());
+		cwRotation.setDuration(ROTATE_ARROW_ANIMATION_DURATION);
+		cwRotation.setFillAfter(true);
 
 		// initialize this property to super's value
 		scrollbarEnabled = super.isVerticalScrollBarEnabled();
@@ -342,7 +343,7 @@ public class PullToRefreshListView extends ListView {
 	 */
 	public void showLastUpdatedText(boolean show) {
 		this.showLastUpdatedText = show;
-		if (state == State.PULL_TO_REFRESH && show && lastUpdated != -1) {
+		if (show) {
 			lastUpdatedTextView.setVisibility(View.VISIBLE);
 		} else {
 			lastUpdatedTextView.setVisibility(View.GONE);
@@ -533,13 +534,13 @@ public class PullToRefreshListView extends ListView {
 						Log.v(LOG_TAG, "Pull threshold exceeded");
 						setState(State.RELEASE_TO_REFRESH);
 						image.clearAnimation();
-						image.startAnimation(flipAnimation);
+						image.startAnimation(ccwRotation);
 					} else if (state == State.RELEASE_TO_REFRESH && headerTopMargin < pullThreshold) {
 						// header pushed back below the threshold
 						Log.v(LOG_TAG, "Push back threshold");
 						setState(State.PULL_TO_REFRESH);
 						image.clearAnimation();
-						image.startAnimation(reverseFlipAnimation);
+						image.startAnimation(cwRotation);
 					}
 
 					// hack to disable scrolling while pushing back up
@@ -620,8 +621,7 @@ public class PullToRefreshListView extends ListView {
 	private void pushHeaderBackAndReset() {
 		if (getFirstVisiblePosition() > 0) {
 			// header not visible, no animation needed
-			setHeaderMargin(-header.getHeight());
-			setState(State.PULL_TO_REFRESH);
+			resetHeader();
 		} else {
 			// push header back, then reset
 			if (getAnimation() != null && !getAnimation().hasEnded()) {
@@ -630,6 +630,14 @@ public class PullToRefreshListView extends ListView {
 				pushHeaderBack(false);
 			}
 		}
+	}
+
+	/**
+	 * Resets the header to its idle, invisible state.
+	 */
+	private void resetHeader() {
+		setHeaderMargin(-header.getHeight());
+		setState(State.PULL_TO_REFRESH);
 	}
 
 	@Override
@@ -659,6 +667,7 @@ public class PullToRefreshListView extends ListView {
 		public void onAnimationStart(Animation animation) {
 			stateAtAnimationStart = state;
 
+			// reduce this ListView's height
 			android.view.ViewGroup.LayoutParams lp = getLayoutParams();
 			height = lp.height;
 			lp.height = getHeight() - translation;
@@ -669,12 +678,14 @@ public class PullToRefreshListView extends ListView {
 
 		@Override
 		public void onAnimationEnd(Animation animation) {
-
+			// cut the margin that's now hidden
 			setHeaderMargin(stateAtAnimationStart == State.REFRESHING && refreshingHeaderEnabled ? 0
 					: -measuredHeaderHeight - headerContainer.getTop());
 
-			setSelection(HEADER_POSITION);
+			//setSelection(HEADER_POSITION);
+			setSelection(FIRST_ITEM_POSITION);
 
+			// restore this ListView's height
 			android.view.ViewGroup.LayoutParams lp = getLayoutParams();
 			lp.height = height;
 			setLayoutParams(lp);
@@ -686,7 +697,7 @@ public class PullToRefreshListView extends ListView {
 				postDelayed(new Runnable() {
 					@Override
 					public void run() {
-						pushHeaderBackAndReset();
+						resetHeader();
 					}
 				}, BOUNCE_ANIMATION_DELAY);
 			} else if (stateAtAnimationStart != State.REFRESHING) {

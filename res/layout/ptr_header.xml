@@ -51,7 +51,7 @@
             android:layout_gravity="center"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="normal"
-            android:visibility="gone" />
+            android:visibility="visible" />
     </LinearLayout>
 
 </LinearLayout>

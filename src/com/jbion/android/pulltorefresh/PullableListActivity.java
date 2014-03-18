@@ -24,7 +24,7 @@ import com.jbion.android.pulltorefresh.widget.PullToLoadListView.OnLoadMoreListe
 public class PullableListActivity extends ListActivity {
 
 	private static final String BASE_NAME = "Element ";
-	private static final int MAX = 200;
+	private static final int MAX = 120;
 	private static final int MIN = 0;
 	private static final int INC = 3;
 	private static final int DEC = 3;
@@ -79,7 +79,6 @@ public class PullableListActivity extends ListActivity {
 			@Override
 			public void onRefresh() {
 				new LoadTopDataTask().execute();
-				// ptr.onRefreshComplete();
 			}
 		});
 
@@ -91,7 +90,7 @@ public class PullableListActivity extends ListActivity {
 				}
 			});
 		}
-		
+
 	}
 
 	private static void timer() {
@@ -113,7 +112,7 @@ public class PullableListActivity extends ListActivity {
 
 	private List<String> addOldNames(int from, int to) {
 		int min = Math.max(from, MIN);
-		int max = Math.min(to, MAX);
+		int max = Math.min(to, MAX + 1);
 		for (int i = max - 1; i >= min; i--) {
 			mListItems.add(BASE_NAME + i);
 		}
