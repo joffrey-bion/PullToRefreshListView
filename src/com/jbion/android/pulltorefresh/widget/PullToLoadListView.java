@@ -127,6 +127,7 @@ public class PullToLoadListView extends PullToRefreshListView implements OnScrol
 		// if need a list to load more items
 		if (onLoadMoreListener != null && loadMoreEnabled) {
 			if (visibleItemCount == totalItemCount) {
+				// nothing to load if the screen is not even full
 				progressBar.setVisibility(View.GONE);
 			} else {
 				if (!mIsLoadingMore && (firstVisibleItem + visibleItemCount >= totalItemCount)) {
@@ -138,8 +139,9 @@ public class PullToLoadListView extends PullToRefreshListView implements OnScrol
 				}
 			}
 		}
-		if (onScrollListener != null)
+		if (onScrollListener != null) {
 			onScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+		}
 	}
 
 	@Override

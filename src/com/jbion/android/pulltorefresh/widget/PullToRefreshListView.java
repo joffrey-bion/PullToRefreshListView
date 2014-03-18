@@ -3,8 +3,6 @@ package com.jbion.android.pulltorefresh.widget;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.jbion.android.pulltorefresh.R;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -25,15 +23,17 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.jbion.android.pulltorefresh.R;
+
 /**
  * A customizable Android {@code ListView} implementation that has 'Pull to Refresh'
  * functionality. This {@code ListView} can be used in place of the normal Android
  * {@link android.widget.ListView} class.
  * <p>
  * Users of this class should implement {@link OnPullToRefreshListener} and call
- * {@link #setOnRefreshListener(OnPullToRefreshListener)} to get notified on refresh
- * events. The using class should call {@link #onRefreshComplete()} when refreshing
- * is finished.
+ * {@link #setOnPullToRefreshListener(OnPullToRefreshListener)} to get notified on
+ * refresh events. The using class should call {@link #onRefreshComplete()} when
+ * refreshing is finished.
  * </p>
  * <p>
  * The using class can call {@link #setRefreshing()} to set the state explicitly to
@@ -205,14 +205,14 @@ public class PullToRefreshListView extends ListView {
 	}
 
 	/**
-	 * Activate an OnPullToRefreshListener to get notified on 'pull to refresh'
-	 * events.
+	 * Activate an {@link OnPullToRefreshListener} to get notified on 'pull to
+	 * refresh' events.
 	 * 
-	 * @param onRefreshListener
-	 *            The OnPullToRefreshListener to get notified
+	 * @param listener
+	 *            The {@link OnPullToRefreshListener} to notify.
 	 */
-	public void setOnRefreshListener(OnPullToRefreshListener onRefreshListener) {
-		this.onRefreshListener = onRefreshListener;
+	public void setOnPullToRefreshListener(OnPullToRefreshListener listener) {
+		this.onRefreshListener = listener;
 	}
 
 	/**
