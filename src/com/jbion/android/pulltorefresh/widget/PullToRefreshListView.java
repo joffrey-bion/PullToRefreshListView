@@ -30,8 +30,8 @@ import android.widget.TextView;
  * functionality. This {@code ListView} can be used in place of the normal Android
  * {@link android.widget.ListView} class.
  * <p>
- * Users of this class should implement {@link OnRefreshListener} and call
- * {@link #setOnRefreshListener(OnRefreshListener)} to get notified on refresh
+ * Users of this class should implement {@link OnPullToRefreshListener} and call
+ * {@link #setOnRefreshListener(OnPullToRefreshListener)} to get notified on refresh
  * events. The using class should call {@link #onRefreshComplete()} when refreshing
  * is finished.
  * </p>
@@ -70,14 +70,14 @@ public class PullToRefreshListView extends ListView {
 
 	/**
 	 * Interface to implement when you want to get notified of 'pull to refresh'
-	 * events. Call setOnRefreshListener(..) to activate an OnRefreshListener.
+	 * events. Call setOnRefreshListener(..) to activate an OnPullToRefreshListener.
 	 */
-	public interface OnRefreshListener {
+	public interface OnPullToRefreshListener {
 
 		/**
 		 * Method called when a refresh is requested.
 		 */
-		public void onRefresh();
+		public void onPullToRefresh();
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class PullToRefreshListView extends ListView {
 
 	private OnItemClickListener onItemClickListener;
 	private OnItemLongClickListener onItemLongClickListener;
-	private OnRefreshListener onRefreshListener;
+	private OnPullToRefreshListener onRefreshListener;
 
 	private String pullToRefreshText = "Pull to refresh";
 	private String releaseToRefreshText = "Release to refresh";
@@ -165,7 +165,7 @@ public class PullToRefreshListView extends ListView {
 		scrollbarEnabled = super.isVerticalScrollBarEnabled();
 
 		// header initialization
-		headerContainer = LayoutInflater.from(getContext()).inflate(R.layout.ptr_header, null);
+		headerContainer = LayoutInflater.from(getContext()).inflate(R.layout.pull_to_refresh_header, null);
 		header = headerContainer.findViewById(R.id.ptr_id_header);
 		text = (TextView) headerContainer.findViewById(R.id.ptr_id_text);
 		image = (ImageView) headerContainer.findViewById(R.id.ptr_id_image);
@@ -206,12 +206,12 @@ public class PullToRefreshListView extends ListView {
 	}
 
 	/**
-	 * Activate an OnRefreshListener to get notified on 'pull to refresh' events.
+	 * Activate an OnPullToRefreshListener to get notified on 'pull to refresh' events.
 	 * 
 	 * @param onRefreshListener
-	 *            The OnRefreshListener to get notified
+	 *            The OnPullToRefreshListener to get notified
 	 */
-	public void setOnRefreshListener(OnRefreshListener onRefreshListener) {
+	public void setOnRefreshListener(OnPullToRefreshListener onRefreshListener) {
 		this.onRefreshListener = onRefreshListener;
 	}
 
@@ -478,7 +478,7 @@ public class PullToRefreshListView extends ListView {
 						pushHeaderBackAndReset();
 					} else {
 						setState(State.REFRESHING);
-						onRefreshListener.onRefresh();
+						onRefreshListener.onPullToRefresh();
 						pushHeaderBack(refreshingHeaderEnabled);
 					}
 					break;

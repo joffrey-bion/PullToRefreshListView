@@ -18,8 +18,8 @@ import android.widget.Toast;
 
 import com.jbion.android.pulltorefresh.widget.PullToRefreshListView;
 import com.jbion.android.pulltorefresh.widget.PullToLoadListView;
-import com.jbion.android.pulltorefresh.widget.PullToRefreshListView.OnRefreshListener;
-import com.jbion.android.pulltorefresh.widget.PullToLoadListView.OnLoadMoreListener;
+import com.jbion.android.pulltorefresh.widget.PullToRefreshListView.OnPullToRefreshListener;
+import com.jbion.android.pulltorefresh.widget.PullToLoadListView.OnPullToLoadMoreListener;
 
 public class PullableListActivity extends ListActivity {
 
@@ -75,17 +75,17 @@ public class PullableListActivity extends ListActivity {
 		ptr.setLockScrollWhileRefreshing(false);
 		ptr.showLastUpdatedText(true);
 		ptr.setLastUpdatedDateFormat(new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()));
-		ptr.setOnRefreshListener(new OnRefreshListener() {
+		ptr.setOnRefreshListener(new OnPullToRefreshListener() {
 			@Override
-			public void onRefresh() {
+			public void onPullToRefresh() {
 				new LoadTopDataTask().execute();
 			}
 		});
 
 		if (ptr instanceof PullToLoadListView) {
-			((PullToLoadListView) ptr).setOnLoadMoreListener(new OnLoadMoreListener() {
+			((PullToLoadListView) ptr).setOnLoadMoreListener(new OnPullToLoadMoreListener() {
 				@Override
-				public void onLoadMore() {
+				public void onPullToLoadMore() {
 					new LoadBottomDataTask().execute();
 				}
 			});

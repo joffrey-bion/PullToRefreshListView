@@ -15,13 +15,13 @@ public class PullToLoadListView extends PullToRefreshListView implements OnScrol
 	 * Interface definition for a callback to be invoked when this list reaches the
 	 * last item.
 	 */
-	public interface OnLoadMoreListener {
+	public interface OnPullToLoadMoreListener {
 		/**
 		 * Called when the list reaches the last item (the last item is visible to
 		 * the user) A call to {@link PullToLoadListView #onLoadingComplete()} is
 		 * expected to indicate that the loading has completed.
 		 */
-		public void onLoadMore();
+		public void onPullToLoadMore();
 	}
 
 	/** Whether the pull-up feature is enabled */
@@ -30,7 +30,7 @@ public class PullToLoadListView extends PullToRefreshListView implements OnScrol
 	/**
 	 * Listener to process load more items when the user reaches the end of the list.
 	 */
-	private OnLoadMoreListener onLoadMoreListener;
+	private OnPullToLoadMoreListener onLoadMoreListener;
 	/**
 	 * Holds the {@link OnScrollListener} set by the user class. Since this class
 	 * uses super's {@link OnScrollListener}, it has to provide a way for the using
@@ -49,7 +49,7 @@ public class PullToLoadListView extends PullToRefreshListView implements OnScrol
 		// footer initialization
 		LayoutInflater mInflater = (LayoutInflater) getContext().getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
-		footerContainer = mInflater.inflate(R.layout.pull_footer, this, false);
+		footerContainer = mInflater.inflate(R.layout.pull_to_load_footer, this, false);
 		progressBar = footerContainer.findViewById(R.id.load_more_progressBar);
 		addFooterView(footerContainer);
 		setFooterDividersEnabled(false);
@@ -85,7 +85,7 @@ public class PullToLoadListView extends PullToRefreshListView implements OnScrol
 	 * @param onLoadMoreListener
 	 *            The callback to run.
 	 */
-	public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
+	public void setOnLoadMoreListener(OnPullToLoadMoreListener onLoadMoreListener) {
 		this.onLoadMoreListener = onLoadMoreListener;
 	}
 
@@ -133,7 +133,7 @@ public class PullToLoadListView extends PullToRefreshListView implements OnScrol
 					progressBar.setVisibility(View.VISIBLE);
 					mIsLoadingMore = true;
 					if (onLoadMoreListener != null) {
-						onLoadMoreListener.onLoadMore();
+						onLoadMoreListener.onPullToLoadMore();
 					}
 				}
 			}

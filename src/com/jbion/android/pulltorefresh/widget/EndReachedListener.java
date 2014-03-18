@@ -56,7 +56,7 @@ public class EndReachedListener implements OnScrollListener {
 		// footer initialization
 		LayoutInflater mInflater = (LayoutInflater) list.getContext().getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
-		footerContainer = mInflater.inflate(R.layout.pull_footer, list, false);
+		footerContainer = mInflater.inflate(R.layout.pull_to_load_footer, list, false);
 		progressBar = footerContainer.findViewById(R.id.load_more_progressBar);
 		list.addFooterView(footerContainer);
 		list.setFooterDividersEnabled(false);
