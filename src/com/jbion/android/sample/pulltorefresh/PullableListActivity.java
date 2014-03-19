@@ -1,4 +1,4 @@
-package com.jbion.android.pulltorefresh;
+package com.jbion.android.sample.pulltorefresh;
 
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
@@ -16,10 +16,11 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Toast;
 
-import com.jbion.android.pulltorefresh.widget.PullToRefreshListView;
-import com.jbion.android.pulltorefresh.widget.PullToLoadListView;
-import com.jbion.android.pulltorefresh.widget.PullToRefreshListView.OnPullToRefreshListener;
-import com.jbion.android.pulltorefresh.widget.PullToLoadListView.OnPullToLoadMoreListener;
+import com.jbion.android.lib.list.pulltorefresh.PullToLoadListView;
+import com.jbion.android.lib.list.pulltorefresh.PullToRefreshListView;
+import com.jbion.android.lib.list.pulltorefresh.PullToLoadListView.OnPullToLoadMoreListener;
+import com.jbion.android.lib.list.pulltorefresh.PullToRefreshListView.OnPullToRefreshListener;
+import com.jbion.android.pulltorefresh.R;
 
 public class PullableListActivity extends ListActivity {
 

@@ -1,4 +1,4 @@
-package com.jbion.android.pulltorefresh.widget;
+package com.jbion.android.lib.list.pulltorefresh;
 
 import android.content.Context;
 import android.util.AttributeSet;

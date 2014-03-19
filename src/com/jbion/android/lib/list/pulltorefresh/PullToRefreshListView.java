@@ -1,4 +1,4 @@
-package com.jbion.android.pulltorefresh.widget;
+package com.jbion.android.lib.list.pulltorefresh;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
