@@ -23,7 +23,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="25dp"
-                android:src="@drawable/ptr_pulltorefresh_arrow" />
+                android:src="@drawable/ptr_pulltorefresh_arrow" 
+                android:contentDescription="@string/image_desc"/>
 
             <ProgressBar
                 android:id="@+id/ptr_id_spinner"
@@ -40,7 +41,6 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black"
                 android:textStyle="bold" />
         </RelativeLayout>
 

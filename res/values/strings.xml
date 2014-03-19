@@ -4,15 +4,7 @@
     <string name="app_name">TestPullToRefresh</string>
     <string name="action_settings">Settings</string>
     <string name="image_desc">Arrow</string>
-    
-    <string name="pull_to_refresh_tap">Rafraîchir</string>
-    <string name="pull_to_refresh_pull">Tirer pour rafraîchir</string>
-    <string name="pull_to_refresh_release">Lâcher pour rafraîchir</string>
-    <string name="pull_to_refresh_refreshing">Chargement&#8230;</string>
-    
-    <string name="ptr_pull_to_refresh">Pull to refresh</string>
-    <string name="ptr_release_to_refresh">Release to refresh</string>
-    <string name="ptr_refreshing">Refreshing…</string>
-    <string name="ptr_last_updated">Updated: %1$s</string>
+    <string name="title_activity_swipe">SwipeActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
