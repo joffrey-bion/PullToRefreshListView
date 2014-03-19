@@ -103,7 +103,7 @@ public class PullToLoadListView extends PullToRefreshListView implements OnScrol
 	 * @param enabled
 	 *            if {@code false}, disables the 'load more' feature.
 	 */
-	public void setLoadMoreEnabled(boolean enabled) {
+	public void setPullToLoadMoreEnabled(boolean enabled) {
 		loadMoreEnabled = enabled;
 	}
 
