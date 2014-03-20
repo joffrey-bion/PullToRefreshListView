@@ -23,8 +23,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import com.nineoldandroids.util.FloatProperty;
-import com.nineoldandroids.util.IntProperty;
 import com.nineoldandroids.util.Property;
 
 /**
@@ -33,6 +31,7 @@ import com.nineoldandroids.util.Property;
  * animations with ValueAnimator or ObjectAnimator that operate on several different properties
  * in parallel.
  */
+@SuppressWarnings("rawtypes")
 class PropertyValuesHolder implements Cloneable {
 
     /**
@@ -128,19 +127,8 @@ class PropertyValuesHolder implements Cloneable {
      * Internal utility constructor, used by the factory methods to set the property name.
      * @param propertyName The name of the property for this holder.
      */
-    private PropertyValuesHolder(String propertyName) {
+    protected PropertyValuesHolder(String propertyName) {
         mPropertyName = propertyName;
-    }
-
-    /**
-     * Internal utility constructor, used by the factory methods to set the property.
-     * @param property The property for this holder.
-     */
-    private PropertyValuesHolder(Property property) {
-        mProperty = property;
-        if (property != null) {
-            mPropertyName = property.getName();
-        }
     }
 
     /**
@@ -237,9 +225,9 @@ class PropertyValuesHolder implements Cloneable {
     public void setKeyframes(Keyframe... values) {
         int numKeyframes = values.length;
         Keyframe keyframes[] = new Keyframe[Math.max(numKeyframes,2)];
-        mValueType = ((Keyframe)values[0]).getType();
+        mValueType = values[0].getType();
         for (int i = 0; i < numKeyframes; ++i) {
-            keyframes[i] = (Keyframe)values[i];
+            keyframes[i] = values[i];
         }
         mKeyframeSet = new KeyframeSet(keyframes);
     }
@@ -580,250 +568,6 @@ class PropertyValuesHolder implements Cloneable {
         char firstLetter = Character.toUpperCase(propertyName.charAt(0));
         String theRest = propertyName.substring(1);
         return prefix + firstLetter + theRest;
-    }
-
-    static class IntPropertyValuesHolder extends PropertyValuesHolder {
-
-        // Cache JNI functions to avoid looking them up twice
-        //private static final HashMap<Class, HashMap<String, Integer>> sJNISetterPropertyMap =
-        //        new HashMap<Class, HashMap<String, Integer>>();
-        //int mJniSetter;
-        private IntProperty mIntProperty;
-
-        IntKeyframeSet mIntKeyframeSet;
-        int mIntAnimatedValue;
-
-        
-
-        
-
-        public IntPropertyValuesHolder(String propertyName, int... values) {
-            super(propertyName);
-            setIntValues(values);
-        }
-
-        private IntPropertyValuesHolder(Property property, int... values) {
-            super(property);
-            setIntValues(values);
-            if (property instanceof  IntProperty) {
-                mIntProperty = (IntProperty) mProperty;
-            }
-        }
-
-        @Override
-        public void setIntValues(int... values) {
-            super.setIntValues(values);
-            mIntKeyframeSet = (IntKeyframeSet) mKeyframeSet;
-        }
-
-        @Override
-        void calculateValue(float fraction) {
-            mIntAnimatedValue = mIntKeyframeSet.getIntValue(fraction);
-        }
-
-        @Override
-        Object getAnimatedValue() {
-            return mIntAnimatedValue;
-        }
-
-        @Override
-        public IntPropertyValuesHolder clone() {
-            IntPropertyValuesHolder newPVH = (IntPropertyValuesHolder) super.clone();
-            newPVH.mIntKeyframeSet = (IntKeyframeSet) newPVH.mKeyframeSet;
-            return newPVH;
-        }
-
-        /**
-         * Internal function to set the value on the target object, using the setter set up
-         * earlier on this PropertyValuesHolder object. This function is called by ObjectAnimator
-         * to handle turning the value calculated by ValueAnimator into a value set on the object
-         * according to the name of the property.
-         * @param target The target object on which the value is set
-         */
-        @Override
-        void setAnimatedValue(Object target) {
-            if (mIntProperty != null) {
-                mIntProperty.setValue(target, mIntAnimatedValue);
-                return;
-            }
-            if (mProperty != null) {
-                mProperty.set(target, mIntAnimatedValue);
-                return;
-            }
-            //if (mJniSetter != 0) {
-            //    nCallIntMethod(target, mJniSetter, mIntAnimatedValue);
-            //    return;
-            //}
-            if (mSetter != null) {
-                try {
-                    mTmpValueArray[0] = mIntAnimatedValue;
-                    mSetter.invoke(target, mTmpValueArray);
-                } catch (InvocationTargetException e) {
-                    Log.e("PropertyValuesHolder", e.toString());
-                } catch (IllegalAccessException e) {
-                    Log.e("PropertyValuesHolder", e.toString());
-                }
-            }
-        }
-
-        @Override
-        void setupSetter(Class targetClass) {
-            if (mProperty != null) {
-                return;
-            }
-            // Check new static hashmap<propName, int> for setter method
-            //try {
-            //    mPropertyMapLock.writeLock().lock();
-            //    HashMap<String, Integer> propertyMap = sJNISetterPropertyMap.get(targetClass);
-            //    if (propertyMap != null) {
-            //        Integer mJniSetterInteger = propertyMap.get(mPropertyName);
-            //        if (mJniSetterInteger != null) {
-            //            mJniSetter = mJniSetterInteger;
-            //        }
-            //    }
-            //    if (mJniSetter == 0) {
-            //        String methodName = getMethodName("set", mPropertyName);
-            //        mJniSetter = nGetIntMethod(targetClass, methodName);
-            //        if (mJniSetter != 0) {
-            //            if (propertyMap == null) {
-            //                propertyMap = new HashMap<String, Integer>();
-            //                sJNISetterPropertyMap.put(targetClass, propertyMap);
-            //            }
-            //            propertyMap.put(mPropertyName, mJniSetter);
-            //        }
-            //    }
-            //} catch (NoSuchMethodError e) {
-            //    Log.d("PropertyValuesHolder",
-            //            "Can't find native method using JNI, use reflection" + e);
-            //} finally {
-            //    mPropertyMapLock.writeLock().unlock();
-            //}
-            //if (mJniSetter == 0) {
-                // Couldn't find method through fast JNI approach - just use reflection
-                super.setupSetter(targetClass);
-            //}
-        }
-    }
-
-   
-    private static class FloatPropertyValuesHolder extends PropertyValuesHolder {
-
-        // Cache JNI functions to avoid looking them up twice
-        //private static final HashMap<Class, HashMap<String, Integer>> sJNISetterPropertyMap =
-        //        new HashMap<Class, HashMap<String, Integer>>();
-        //int mJniSetter;
-        private FloatProperty mFloatProperty;
-
-        private FloatKeyframeSet mFloatKeyframeSet;
-        private float mFloatAnimatedValue;
-
-        private FloatPropertyValuesHolder(String propertyName, float... values) {
-            super(propertyName);
-            setFloatValues(values);
-        }
-
-        private FloatPropertyValuesHolder(Property property, float... values) {
-            super(property);
-            setFloatValues(values);
-            if (property instanceof  FloatProperty) {
-                mFloatProperty = (FloatProperty) mProperty;
-            }
-        }
-
-        @Override
-        public void setFloatValues(float... values) {
-            super.setFloatValues(values);
-            mFloatKeyframeSet = (FloatKeyframeSet) mKeyframeSet;
-        }
-
-        @Override
-        void calculateValue(float fraction) {
-            mFloatAnimatedValue = mFloatKeyframeSet.getFloatValue(fraction);
-        }
-
-        @Override
-        Object getAnimatedValue() {
-            return mFloatAnimatedValue;
-        }
-
-        @Override
-        public FloatPropertyValuesHolder clone() {
-            FloatPropertyValuesHolder newPVH = (FloatPropertyValuesHolder) super.clone();
-            newPVH.mFloatKeyframeSet = (FloatKeyframeSet) newPVH.mKeyframeSet;
-            return newPVH;
-        }
-
-        /**
-         * Internal function to set the value on the target object, using the setter set up
-         * earlier on this PropertyValuesHolder object. This function is called by ObjectAnimator
-         * to handle turning the value calculated by ValueAnimator into a value set on the object
-         * according to the name of the property.
-         * @param target The target object on which the value is set
-         */
-        @Override
-        void setAnimatedValue(Object target) {
-            if (mFloatProperty != null) {
-                mFloatProperty.setValue(target, mFloatAnimatedValue);
-                return;
-            }
-            if (mProperty != null) {
-                mProperty.set(target, mFloatAnimatedValue);
-                return;
-            }
-            //if (mJniSetter != 0) {
-            //    nCallFloatMethod(target, mJniSetter, mFloatAnimatedValue);
-            //    return;
-            //}
-            if (mSetter != null) {
-                try {
-                    mTmpValueArray[0] = mFloatAnimatedValue;
-                    mSetter.invoke(target, mTmpValueArray);
-                } catch (InvocationTargetException e) {
-                    Log.e("PropertyValuesHolder", e.toString());
-                } catch (IllegalAccessException e) {
-                    Log.e("PropertyValuesHolder", e.toString());
-                }
-            }
-        }
-
-        @Override
-        void setupSetter(Class targetClass) {
-            if (mProperty != null) {
-                return;
-            }
-            // Check new static hashmap<propName, int> for setter method
-            //try {
-            //    mPropertyMapLock.writeLock().lock();
-            //    HashMap<String, Integer> propertyMap = sJNISetterPropertyMap.get(targetClass);
-            //    if (propertyMap != null) {
-            //        Integer mJniSetterInteger = propertyMap.get(mPropertyName);
-            //        if (mJniSetterInteger != null) {
-            //            mJniSetter = mJniSetterInteger;
-            //        }
-            //    }
-            //    if (mJniSetter == 0) {
-            //        String methodName = getMethodName("set", mPropertyName);
-            //        mJniSetter = nGetFloatMethod(targetClass, methodName);
-            //        if (mJniSetter != 0) {
-            //            if (propertyMap == null) {
-            //                propertyMap = new HashMap<String, Integer>();
-            //                sJNISetterPropertyMap.put(targetClass, propertyMap);
-            //            }
-            //            propertyMap.put(mPropertyName, mJniSetter);
-            //        }
-            //    }
-            //} catch (NoSuchMethodError e) {
-            //    Log.d("PropertyValuesHolder",
-            //            "Can't find native method using JNI, use reflection" + e);
-            //} finally {
-            //    mPropertyMapLock.writeLock().unlock();
-            //}
-            //if (mJniSetter == 0) {
-                // Couldn't find method through fast JNI approach - just use reflection
-                super.setupSetter(targetClass);
-            //}
-        }
-
     }
 
     //native static private int nGetIntMethod(Class targetClass, String methodName);
