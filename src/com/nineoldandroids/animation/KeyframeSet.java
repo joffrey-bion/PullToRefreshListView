@@ -21,10 +21,6 @@ import java.util.Arrays;
 
 import android.view.animation.Interpolator;
 
-import com.nineoldandroids.animation.Keyframe.FloatKeyframe;
-import com.nineoldandroids.animation.Keyframe.IntKeyframe;
-import com.nineoldandroids.animation.Keyframe.ObjectKeyframe;
-
 /**
  * This class holds a collection of Keyframe objects and is called by ValueAnimator to calculate
  * values between those keyframes for a given animation. The class internal to the animation

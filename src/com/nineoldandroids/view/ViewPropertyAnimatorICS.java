@@ -1,11 +1,13 @@
 package com.nineoldandroids.view;
 
 import java.lang.ref.WeakReference;
+
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.view.View;
 import android.view.animation.Interpolator;
-import com.nineoldandroids.animation.Animator.AnimatorListener;
+
+import com.nineoldandroids.animation.AnimatorListener;
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 class ViewPropertyAnimatorICS extends ViewPropertyAnimator {

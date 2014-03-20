@@ -12,10 +12,12 @@
 package com.nineoldandroids.view;
 
 import java.util.WeakHashMap;
+
 import android.os.Build;
 import android.view.View;
 import android.view.animation.Interpolator;
-import com.nineoldandroids.animation.Animator;
+
+import com.nineoldandroids.animation.AnimatorListener;
 
 /**
  * This class enables automatic and optimized animation of select properties on View
@@ -112,7 +114,7 @@ public abstract class ViewPropertyAnimator {
 	 *            The listener to be called with AnimatorListener events.
 	 * @return This object, allowing calls to methods in this class to be chained.
 	 */
-	public abstract ViewPropertyAnimator setListener(Animator.AnimatorListener listener);
+	public abstract ViewPropertyAnimator setListener(AnimatorListener listener);
 
 	/**
 	 * This method will cause the View's <code>translationX</code> property to be

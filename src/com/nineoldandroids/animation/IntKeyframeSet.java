@@ -18,8 +18,6 @@ package com.nineoldandroids.animation;
 
 import android.view.animation.Interpolator;
 
-import com.nineoldandroids.animation.Keyframe.IntKeyframe;
-
 import java.util.ArrayList;
 
 /**

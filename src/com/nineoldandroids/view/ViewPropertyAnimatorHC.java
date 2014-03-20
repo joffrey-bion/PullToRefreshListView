@@ -15,11 +15,15 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
+
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.view.View;
 import android.view.animation.Interpolator;
+
 import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.AnimatorListener;
+import com.nineoldandroids.animation.AnimatorUpdateListener;
 import com.nineoldandroids.animation.ValueAnimator;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -78,7 +82,7 @@ class ViewPropertyAnimatorHC extends ViewPropertyAnimator {
 	/**
 	 * Listener for the lifecycle events of the underlying
 	 */
-	private Animator.AnimatorListener mListener = null;
+	private AnimatorListener mListener = null;
 
 	/**
 	 * This listener is the mechanism by which the underlying Animator causes changes
@@ -269,7 +273,7 @@ class ViewPropertyAnimatorHC extends ViewPropertyAnimator {
 	}
 
 	@Override
-	public ViewPropertyAnimator setListener(Animator.AnimatorListener listener) {
+	public ViewPropertyAnimator setListener(AnimatorListener listener) {
 		mListener = listener;
 		return this;
 	}
@@ -496,8 +500,8 @@ class ViewPropertyAnimatorHC extends ViewPropertyAnimator {
 	 * animator finishes) and the update event (which we use to calculate the current
 	 * value of each property and then set it on the view object).
 	 */
-	private class AnimatorEventListener implements Animator.AnimatorListener,
-			ValueAnimator.AnimatorUpdateListener {
+	private class AnimatorEventListener implements AnimatorListener,
+			AnimatorUpdateListener {
 		@Override
 		public void onAnimationStart(Animator animation) {
 			if (mListener != null) {

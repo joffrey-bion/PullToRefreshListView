@@ -11,6 +11,7 @@ import android.widget.ListView;
 
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
+import com.nineoldandroids.animation.AnimatorUpdateListener;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.view.ViewHelper;
 
@@ -964,7 +965,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
             });
         }
 
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        animator.addUpdateListener(new AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 lp.height = (Integer) valueAnimator.getAnimatedValue();

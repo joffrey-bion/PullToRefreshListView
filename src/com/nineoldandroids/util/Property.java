@@ -59,11 +59,7 @@ public abstract class Property<T, V> {
         throw new UnsupportedOperationException("Property " + getName() + " is read-only");
     }
 
-    /**
-     * Returns the current value that this property represents on the given
-     * <code>object</code>.
-     */
-    public abstract V get(T object);
+    
 
     /**
      * Returns the name for this property.
