@@ -30,8 +30,8 @@ class KeyframeSet {
 
     int mNumKeyframes;
 
-    Keyframe mFirstKeyframe;
-    Keyframe mLastKeyframe;
+    private Keyframe mFirstKeyframe;
+    private Keyframe mLastKeyframe;
     /*Time*/Interpolator mInterpolator; // only used in the 2-keyframe case
     ArrayList<Keyframe> mKeyframes; // only used when there are not 2 keyframes
     TypeEvaluator mEvaluator;

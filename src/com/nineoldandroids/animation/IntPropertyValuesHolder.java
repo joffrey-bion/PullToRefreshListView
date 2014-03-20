@@ -2,7 +2,7 @@ package com.nineoldandroids.animation;
 
 class IntPropertyValuesHolder extends PropertyValuesHolder {
 
-    IntKeyframeSet mIntKeyframeSet;
+    private IntKeyframeSet mIntKeyframeSet;
     int mIntAnimatedValue;
 
     public IntPropertyValuesHolder(String propertyName, int... values) {

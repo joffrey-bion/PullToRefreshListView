@@ -8,7 +8,7 @@ class ObjectKeyframe extends Keyframe {
     /**
      * The value of the animation at the time mFraction.
      */
-    Object mValue;
+    private Object mValue;
 
     ObjectKeyframe(float fraction, Object value) {
         mFraction = fraction;
@@ -17,10 +17,12 @@ class ObjectKeyframe extends Keyframe {
         mValueType = mHasValue ? value.getClass() : Object.class;
     }
 
+    @Override
     public Object getValue() {
         return mValue;
     }
 
+    @Override
     public void setValue(Object value) {
         mValue = value;
         mHasValue = (value != null);

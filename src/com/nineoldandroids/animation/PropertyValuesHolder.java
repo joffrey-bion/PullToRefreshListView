@@ -13,8 +13,6 @@ package com.nineoldandroids.animation;
 
 import android.animation.ObjectAnimator;
 
-import com.nineoldandroids.util.Property;
-
 /**
  * This class holds information about a property and the values that that property
  * should take on during an animation. PropertyValuesHolder objects can be used to
@@ -33,13 +31,6 @@ class PropertyValuesHolder implements Cloneable {
     private String mPropertyName;
 
     /**
-     * @hide
-     */
-    Property mProperty;
-
-    
-
-    /**
      * The type of values supplied. This information is used both in deriving the
      * setter/getter functions and in deriving the type of TypeEvaluator.
      */
@@ -53,10 +44,6 @@ class PropertyValuesHolder implements Cloneable {
     // type evaluators for the primitive types handled by this implementation
     private static final TypeEvaluator sIntEvaluator = new IntEvaluator();
     private static final TypeEvaluator sFloatEvaluator = new FloatEvaluator();
-
-    
-
-    
 
     /**
      * The type evaluator used to calculate the animated values. This evaluator is
@@ -112,29 +99,6 @@ class PropertyValuesHolder implements Cloneable {
      */
     public static PropertyValuesHolder ofFloat(String propertyName, float... values) {
         return new FloatPropertyValuesHolder(propertyName, values);
-    }
-
-    /**
-     * Constructs and returns a PropertyValuesHolder with a given property name and
-     * set of Object values. This variant also takes a TypeEvaluator because the
-     * system cannot automatically interpolate between objects of unknown type.
-     * 
-     * @param propertyName
-     *            The name of the property being animated.
-     * @param evaluator
-     *            A TypeEvaluator that will be called on each animation frame to
-     *            provide the necessary interpolation between the Object values to
-     *            derive the animated value.
-     * @param values
-     *            The values that the named property will animate between.
-     * @return PropertyValuesHolder The constructed PropertyValuesHolder object.
-     */
-    public static PropertyValuesHolder ofObject(String propertyName, TypeEvaluator evaluator,
-            Object... values) {
-        PropertyValuesHolder pvh = new PropertyValuesHolder(propertyName);
-        pvh.setObjectValues(values);
-        pvh.setEvaluator(evaluator);
-        return pvh;
     }
 
     /**
@@ -215,7 +179,6 @@ class PropertyValuesHolder implements Cloneable {
         try {
             PropertyValuesHolder newPVH = (PropertyValuesHolder) super.clone();
             newPVH.mPropertyName = mPropertyName;
-            newPVH.mProperty = mProperty;
             newPVH.mKeyframeSet = mKeyframeSet.clone();
             newPVH.mEvaluator = mEvaluator;
             return newPVH;
@@ -295,27 +258,13 @@ class PropertyValuesHolder implements Cloneable {
     }
 
     /**
-     * Sets the property that will be animated.
-     * 
-     * <p>
-     * Note that if this PropertyValuesHolder object is used with ObjectAnimator, the
-     * property must exist on the target object specified in that ObjectAnimator.
-     * </p>
-     * 
-     * @param property
-     *            The property being animated.
-     */
-    public void setProperty(Property property) {
-        mProperty = property;
-    }
-
-    /**
      * Gets the name of the property that will be animated. This name will be used to
      * derive a setter function that will be called to set animated values. For
      * example, a property name of <code>foo</code> will result in a call to the
      * function <code>setFoo()</code> on the target object. If either
      * <code>valueFrom</code> or <code>valueTo</code> is null, then a getter function
      * will also be derived and called.
+     * 
      * @return bababebaebzebgzrbb
      */
     public String getPropertyName() {
@@ -336,8 +285,6 @@ class PropertyValuesHolder implements Cloneable {
     public String toString() {
         return mPropertyName + ": " + mKeyframeSet.toString();
     }
-
-    
 
     // native static private int nGetIntMethod(Class targetClass, String methodName);
     // native static private int nGetFloatMethod(Class targetClass, String

@@ -8,7 +8,7 @@ class IntKeyframe extends Keyframe {
     /**
      * The value of the animation at the time mFraction.
      */
-    int mValue;
+    private int mValue;
 
     IntKeyframe(float fraction, int value) {
         mFraction = fraction;

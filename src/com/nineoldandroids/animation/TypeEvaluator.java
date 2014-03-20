@@ -24,7 +24,7 @@ package com.nineoldandroids.animation;
  *
  * @see ValueAnimator#setEvaluator(TypeEvaluator)
  */
-public interface TypeEvaluator<T> {
+interface TypeEvaluator<T> {
 
     /**
      * This function returns the result of linearly interpolating the start and end values, with

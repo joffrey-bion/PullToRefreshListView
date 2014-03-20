@@ -1,15 +1,14 @@
 package com.nineoldandroids.view.animation;
 
+import java.lang.ref.WeakReference;
+import java.util.WeakHashMap;
+
 import android.graphics.Camera;
 import android.graphics.Matrix;
 import android.graphics.RectF;
-import android.os.Build;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
-
-import java.lang.ref.WeakReference;
-import java.util.WeakHashMap;
 
 /**
  * A proxy class to allow for modifying post-3.0 view properties on all pre-3.0
@@ -78,28 +77,6 @@ public final class AnimatorProxy extends Animation {
             }
         }
     }
-    public float getPivotX() {
-        return mPivotX;
-    }
-    public void setPivotX(float pivotX) {
-        if (!mHasPivot || mPivotX != pivotX) {
-            prepareForUpdate();
-            mHasPivot = true;
-            mPivotX = pivotX;
-            invalidateAfterUpdate();
-        }
-    }
-    public float getPivotY() {
-        return mPivotY;
-    }
-    public void setPivotY(float pivotY) {
-        if (!mHasPivot || mPivotY != pivotY) {
-            prepareForUpdate();
-            mHasPivot = true;
-            mPivotY = pivotY;
-            invalidateAfterUpdate();
-        }
-    }
     public float getRotation() {
         return mRotationZ;
     }
@@ -149,32 +126,6 @@ public final class AnimatorProxy extends Animation {
             prepareForUpdate();
             mScaleY = scaleY;
             invalidateAfterUpdate();
-        }
-    }
-    public int getScrollX() {
-        View view = mView.get();
-        if (view == null) {
-            return 0;
-        }
-        return view.getScrollX();
-    }
-    public void setScrollX(int value) {
-        View view = mView.get();
-        if (view != null) {
-            view.scrollTo(value, view.getScrollY());
-        }
-    }
-    public int getScrollY() {
-        View view = mView.get();
-        if (view == null) {
-            return 0;
-        }
-        return view.getScrollY();
-    }
-    public void setScrollY(int value) {
-        View view = mView.get();
-        if (view != null) {
-            view.scrollTo(view.getScrollX(), value);
         }
     }
 

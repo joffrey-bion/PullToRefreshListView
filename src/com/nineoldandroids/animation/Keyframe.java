@@ -35,7 +35,7 @@ import android.view.animation.Interpolator;
  * of {@link TypeEvaluator}), you should stick to using float and int as animations using those
  * types have lower runtime overhead than other types.</p>
  */
-public abstract class Keyframe implements Cloneable {
+abstract class Keyframe implements Cloneable {
     /**
      * The time at which mValue will hold true.
      */
@@ -72,7 +72,7 @@ public abstract class Keyframe implements Cloneable {
      * the time in this keyframe, and the the value animated from as the time passes the time in
      * this keyframe.
      */
-    public static Keyframe ofInt(float fraction, int value) {
+    static Keyframe ofInt(float fraction, int value) {
         return new IntKeyframe(fraction, value);
     }
 
@@ -88,7 +88,7 @@ public abstract class Keyframe implements Cloneable {
      * @param fraction The time, expressed as a value between 0 and 1, representing the fraction
      * of time elapsed of the overall animation duration.
      */
-    public static Keyframe ofInt(float fraction) {
+    static Keyframe ofInt(float fraction) {
         return new IntKeyframe(fraction);
     }
 
@@ -104,7 +104,7 @@ public abstract class Keyframe implements Cloneable {
      * the time in this keyframe, and the the value animated from as the time passes the time in
      * this keyframe.
      */
-    public static Keyframe ofFloat(float fraction, float value) {
+    static Keyframe ofFloat(float fraction, float value) {
         return new FloatKeyframe(fraction, value);
     }
 
@@ -120,7 +120,7 @@ public abstract class Keyframe implements Cloneable {
      * @param fraction The time, expressed as a value between 0 and 1, representing the fraction
      * of time elapsed of the overall animation duration.
      */
-    public static Keyframe ofFloat(float fraction) {
+    static Keyframe ofFloat(float fraction) {
         return new FloatKeyframe(fraction);
     }
 
@@ -136,7 +136,7 @@ public abstract class Keyframe implements Cloneable {
      * the time in this keyframe, and the the value animated from as the time passes the time in
      * this keyframe.
      */
-    public static Keyframe ofObject(float fraction, Object value) {
+    static Keyframe ofObject(float fraction, Object value) {
         return new ObjectKeyframe(fraction, value);
     }
 
@@ -152,7 +152,7 @@ public abstract class Keyframe implements Cloneable {
      * @param fraction The time, expressed as a value between 0 and 1, representing the fraction
      * of time elapsed of the overall animation duration.
      */
-    public static Keyframe ofObject(float fraction) {
+    static Keyframe ofObject(float fraction) {
         return new ObjectKeyframe(fraction, null);
     }
 

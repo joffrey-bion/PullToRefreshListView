@@ -19,7 +19,7 @@ package com.nineoldandroids.animation;
 /**
  * This evaluator can be used to perform type interpolation between <code>int</code> values.
  */
-public class IntEvaluator implements TypeEvaluator<Integer> {
+class IntEvaluator implements TypeEvaluator<Integer> {
 
     /**
      * This function returns the result of linearly interpolating the start and end values, with

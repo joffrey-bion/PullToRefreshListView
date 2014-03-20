@@ -7,7 +7,7 @@ class FloatKeyframe extends Keyframe {
     /**
      * The value of the animation at the time mFraction.
      */
-    float mValue;
+    private float mValue;
 
     FloatKeyframe(float fraction, float value) {
         mFraction = fraction;

@@ -37,7 +37,7 @@ import java.util.HashMap;
  * {@link ValueAnimator#setInterpolator(TimeInterpolator)}.
  * </p>
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class ValueAnimator extends Animator {
 
     /**
