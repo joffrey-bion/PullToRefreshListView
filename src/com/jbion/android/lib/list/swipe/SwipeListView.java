@@ -16,24 +16,9 @@ import java.util.List;
 
 import com.jbion.android.pulltorefresh.R;
 
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.database.DataSetObserver;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.ViewConfigurationCompat;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewConfiguration;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-
-import java.util.List;
-
 /**
  * ListView subclass that provides the swipe functionality
  */
-@SuppressWarnings("ucd")
 public class SwipeListView extends ListView {
 
     /**

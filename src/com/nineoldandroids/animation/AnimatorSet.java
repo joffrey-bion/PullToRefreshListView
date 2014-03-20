@@ -818,17 +818,6 @@ final class AnimatorSet extends Animator {
         public boolean done = false;
 
         /**
-         * Constructs the Node with the animation that it encapsulates. A Node has no
-         * dependencies by default; dependencies are added via the addDependency()
-         * method.
-         *
-         * @param animation The animation that the Node encapsulates.
-         */
-        public Node(Animator animation) {
-            this.animation = animation;
-        }
-
-        /**
          * Add a dependency to this Node. The dependency includes information about the
          * node that this node is dependency upon and the nature of the dependency.
          * @param dependency

@@ -18,7 +18,7 @@ import java.util.WeakHashMap;
  */
 public final class AnimatorProxy extends Animation {
     /** Whether or not the current running platform needs to be proxied. */
-    public static final boolean OLD_VERSION = Integer.valueOf(Build.VERSION.SDK).intValue() < Build.VERSION_CODES.HONEYCOMB;
+    public static final boolean OLD_VERSION = Integer.valueOf(Build.VERSION.SDK_INT).intValue() < Build.VERSION_CODES.HONEYCOMB;
 
     private static final WeakHashMap<View, AnimatorProxy> PROXIES =
             new WeakHashMap<View, AnimatorProxy>();

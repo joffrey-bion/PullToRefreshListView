@@ -47,7 +47,6 @@ import com.jbion.android.pulltorefresh.R;
  * finished, for state consistency.
  * </p>
  */
-@SuppressWarnings("ucd")
 public class PullToRefreshListView extends ListView {
 
 	private static final String LOG_TAG = PullToRefreshListView.class.getSimpleName();
