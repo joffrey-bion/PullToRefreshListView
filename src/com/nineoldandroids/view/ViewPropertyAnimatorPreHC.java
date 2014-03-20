@@ -25,6 +25,7 @@ import com.nineoldandroids.animation.AnimatorUpdateListener;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.view.animation.AnimatorProxy;
 
+@SuppressWarnings("unchecked")
 class ViewPropertyAnimatorPreHC extends ViewPropertyAnimator {
 	/**
 	 * Proxy animation class which will allow us access to post-Honeycomb properties
@@ -103,7 +104,7 @@ class ViewPropertyAnimatorPreHC extends ViewPropertyAnimator {
 	 * which time the pending list is cleared and the properties on that list are
 	 * added to the list of properties associated with that animator.
 	 */
-	ArrayList<NameValuesHolder> mPendingAnimations = new ArrayList<NameValuesHolder>();
+	private ArrayList<NameValuesHolder> mPendingAnimations = new ArrayList<NameValuesHolder>();
 
 	/**
 	 * Constants used to associate a property being requested and the mechanism used
@@ -244,38 +245,6 @@ class ViewPropertyAnimatorPreHC extends ViewPropertyAnimator {
 		return this;
 	}
 
-	/**
-	 * Returns the current duration of property animations. If the duration was set
-	 * on this object, that value is returned. Otherwise, the default value of the
-	 * underlying Animator is returned.
-	 * 
-	 * @see #setDuration(long)
-	 * @return The duration of animations, in milliseconds.
-	 */
-	@Override
-	public long getDuration() {
-		if (mDurationSet) {
-			return mDuration;
-		} else {
-			// Just return the default from ValueAnimator, since that's what we'd get
-			// if
-			// the value has not been set otherwise
-			return new ValueAnimator().getDuration();
-		}
-	}
-
-	@Override
-	public long getStartDelay() {
-		if (mStartDelaySet) {
-			return mStartDelay;
-		} else {
-			// Just return the default from ValueAnimator (0), since that's what we'd
-			// get if
-			// the value has not been set otherwise
-			return 0;
-		}
-	}
-
 	@Override
 	public ViewPropertyAnimator setListener(AnimatorListener listener) {
 		mListener = listener;
@@ -299,7 +268,7 @@ class ViewPropertyAnimatorPreHC extends ViewPropertyAnimator {
 	 * animator that simply runs from 0 to 1, and then use that fractional value to
 	 * set each property value accordingly.
 	 */
-	private void startAnimation() {
+    private void startAnimation() {
 		ValueAnimator animator = ValueAnimator.ofFloat(1.0f);
 		ArrayList<NameValuesHolder> nameValueList = (ArrayList<NameValuesHolder>) mPendingAnimations
 				.clone();

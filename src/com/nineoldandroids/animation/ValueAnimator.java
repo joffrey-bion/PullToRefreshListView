@@ -60,9 +60,9 @@ public class ValueAnimator extends Animator {
      * Values used with internal variable mPlayingState to indicate the current state
      * of an animation.
      */
-    static final int STOPPED = 0; // Not yet playing
-    static final int RUNNING = 1; // Playing normally
-    static final int SEEKED = 2; // Seeked to some time value
+    private static final int STOPPED = 0; // Not yet playing
+    private static final int RUNNING = 1; // Playing normally
+    private static final int SEEKED = 2; // Seeked to some time value
 
     /**
      * Internal variables NOTE: This object implements the clone() method, making a
@@ -70,7 +70,7 @@ public class ValueAnimator extends Animator {
      * this class, make sure to add logic to clone() to make deep copies of them.
      */
 
-    // The first time that the animation's animateFrame() method is called. This time
+    private // The first time that the animation's animateFrame() method is called. This time
     // is used to
     // determine elapsed time (and therefore the elapsed fraction) in subsequent
     // calls
@@ -81,7 +81,7 @@ public class ValueAnimator extends Animator {
      * Set when setCurrentPlayTime() is called. If negative, animation is not
      * currently seeked to a value.
      */
-    long mSeekTime = -1;
+    private long mSeekTime = -1;
 
     // TODO: We access the following ThreadLocal variables often, some of them on
     // every update.
@@ -179,7 +179,7 @@ public class ValueAnimator extends Animator {
      * animation that has been cancel()'d or end()'d since the last animation frame.
      * Possible values are STOPPED, RUNNING, SEEKED.
      */
-    int mPlayingState = STOPPED;
+    private int mPlayingState = STOPPED;
 
     /**
      * Additional playing state to indicate whether an animator has been start()'d.
@@ -201,7 +201,7 @@ public class ValueAnimator extends Animator {
      * Flag that denotes whether the animation is set up and ready to go. Used to set
      * up animation that has not yet been started.
      */
-    boolean mInitialized = false;
+    private boolean mInitialized = false;
 
     //
     // Backing variables
@@ -244,13 +244,13 @@ public class ValueAnimator extends Animator {
     /**
      * The property/value sets being animated.
      */
-    PropertyValuesHolder[] mValues;
+    private PropertyValuesHolder[] mValues;
 
     /**
      * A hashmap of the PropertyValuesHolder objects. This map is used to lookup
      * animated values by property name during calls to getAnimatedValue(String).
      */
-    HashMap<String, PropertyValuesHolder> mValuesMap;
+    private HashMap<String, PropertyValuesHolder> mValuesMap;
 
     /**
      * Public constants
@@ -260,17 +260,17 @@ public class ValueAnimator extends Animator {
      * When the animation reaches the end and <code>repeatCount</code> is INFINITE or
      * a positive value, the animation restarts from the beginning.
      */
-    public static final int RESTART = 1;
+    private static final int RESTART = 1;
     /**
      * When the animation reaches the end and <code>repeatCount</code> is INFINITE or
      * a positive value, the animation reverses direction on every iteration.
      */
-    public static final int REVERSE = 2;
+    private static final int REVERSE = 2;
     /**
      * This value used used with the {@link #setRepeatCount(int)} property to repeat
      * the animation indefinitely.
      */
-    public static final int INFINITE = -1;
+    private static final int INFINITE = -1;
 
     /**
      * Creates a new ValueAnimator object. This default constructor is primarily for
@@ -416,7 +416,7 @@ public class ValueAnimator extends Animator {
      * internal mechanisms for the animation are set up correctly.
      * </p>
      */
-    void initAnimation() {
+    private void initAnimation() {
         if (!mInitialized) {
             int numValues = mValues.length;
             for (int i = 0; i < numValues; ++i) {
@@ -916,7 +916,7 @@ public class ValueAnimator extends Animator {
      * @param fraction
      *            The elapsed fraction of the animation.
      */
-    void animateValue(float fraction) {
+    private void animateValue(float fraction) {
         fraction = mInterpolator.getInterpolation(fraction);
         mCurrentFraction = fraction;
         int numValues = mValues.length;

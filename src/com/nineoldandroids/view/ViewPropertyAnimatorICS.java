@@ -5,18 +5,11 @@ import java.lang.ref.WeakReference;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.view.View;
-import android.view.animation.Interpolator;
 
 import com.nineoldandroids.animation.AnimatorListener;
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 class ViewPropertyAnimatorICS extends ViewPropertyAnimator {
-	/**
-	 * A value to be returned when the WeakReference holding the native
-	 * implementation returns <code>null</code>
-	 */
-	private final static long RETURN_WHEN_NULL = -1L;
-
 	/**
 	 * A WeakReference holding the native implementation of ViewPropertyAnimator
 	 */
@@ -33,24 +26,6 @@ class ViewPropertyAnimatorICS extends ViewPropertyAnimator {
 			n.setDuration(duration);
 		}
 		return this;
-	}
-
-	@Override
-	public long getDuration() {
-		android.view.ViewPropertyAnimator n = mNative.get();
-		if (n != null) {
-			return n.getDuration();
-		}
-		return RETURN_WHEN_NULL;
-	}
-
-	@Override
-	public long getStartDelay() {
-		android.view.ViewPropertyAnimator n = mNative.get();
-		if (n != null) {
-			return n.getStartDelay();
-		}
-		return RETURN_WHEN_NULL;
 	}
 
 	@Override

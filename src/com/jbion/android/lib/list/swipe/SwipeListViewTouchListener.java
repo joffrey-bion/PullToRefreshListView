@@ -26,6 +26,7 @@ import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 /**
  * Touch listener impl for the SwipeListView
  */
+@SuppressWarnings("ucd")
 public class SwipeListViewTouchListener implements View.OnTouchListener {
 
     private static final int DISPLACE_CHOICE = 80;
@@ -925,9 +926,10 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
     /**
      * Class that saves pending dismiss data
      */
+    @SuppressWarnings("ucd")
     class PendingDismissData implements Comparable<PendingDismissData> {
-        public int position;
-        public View view;
+        private int position;
+        private View view;
 
         public PendingDismissData(int position, View view) {
             this.position = position;

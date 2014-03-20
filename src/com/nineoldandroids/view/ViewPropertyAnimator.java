@@ -15,7 +15,6 @@ import java.util.WeakHashMap;
 
 import android.os.Build;
 import android.view.View;
-import android.view.animation.Interpolator;
 
 import com.nineoldandroids.animation.AnimatorListener;
 
@@ -61,7 +60,7 @@ public abstract class ViewPropertyAnimator {
 	public static ViewPropertyAnimator animate(View view) {
 		ViewPropertyAnimator animator = ANIMATORS.get(view);
 		if (animator == null) {
-			final int version = Integer.valueOf(Build.VERSION.SDK);
+			final int version = Integer.valueOf(Build.VERSION.SDK_INT);
 			if (version >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 				animator = new ViewPropertyAnimatorICS(view);
 			} else if (version >= Build.VERSION_CODES.HONEYCOMB) {
@@ -85,26 +84,6 @@ public abstract class ViewPropertyAnimator {
 	 * @return This object, allowing calls to methods in this class to be chained.
 	 */
 	public abstract ViewPropertyAnimator setDuration(long duration);
-
-	/**
-	 * Returns the current duration of property animations. If the duration was set
-	 * on this object, that value is returned. Otherwise, the default value of the
-	 * underlying Animator is returned.
-	 * 
-	 * @see #setDuration(long)
-	 * @return The duration of animations, in milliseconds.
-	 */
-	public abstract long getDuration();
-
-	/**
-	 * Returns the current startDelay of property animations. If the startDelay was
-	 * set on this object, that value is returned. Otherwise, the default value of
-	 * the underlying Animator is returned.
-	 * 
-	 * @see #setStartDelay(long)
-	 * @return The startDelay of animations, in milliseconds.
-	 */
-	public abstract long getStartDelay();
 
 	/**
 	 * Sets a listener for events in the underlying Animators that run the property
