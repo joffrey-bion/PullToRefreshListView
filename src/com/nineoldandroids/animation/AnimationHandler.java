@@ -13,6 +13,7 @@ import android.view.animation.AnimationUtils;
  * for calculating their values, which makes synchronizing animations possible.
  * 
  */
+@SuppressWarnings("unchecked")
 class AnimationHandler extends Handler {
     /**
      * There are only two messages that we care about: ANIMATION_START and

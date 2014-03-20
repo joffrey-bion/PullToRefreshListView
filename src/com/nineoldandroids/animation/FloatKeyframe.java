@@ -25,10 +25,12 @@ class FloatKeyframe extends Keyframe {
         return mValue;
     }
 
+    @Override
     public Object getValue() {
         return mValue;
     }
 
+    @Override
     public void setValue(Object value) {
         if (value != null && value.getClass() == Float.class) {
             mValue = ((Float)value).floatValue();

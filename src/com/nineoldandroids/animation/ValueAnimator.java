@@ -11,15 +11,17 @@
 
 package com.nineoldandroids.animation;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import android.animation.ArgbEvaluator;
+import android.animation.TimeInterpolator;
 import android.os.Looper;
 import android.util.AndroidRuntimeException;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * This class provides a simple timing engine for running animations which calculate
@@ -37,7 +39,7 @@ import java.util.HashMap;
  * {@link ValueAnimator#setInterpolator(TimeInterpolator)}.
  * </p>
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({ "rawtypes", "unchecked", "javadoc" })
 public class ValueAnimator extends Animator {
 
     /**
@@ -70,7 +72,8 @@ public class ValueAnimator extends Animator {
      * this class, make sure to add logic to clone() to make deep copies of them.
      */
 
-    private // The first time that the animation's animateFrame() method is called. This time
+    private// The first time that the animation's animateFrame() method is called.
+    // This time
     // is used to
     // determine elapsed time (and therefore the elapsed fraction) in subsequent
     // calls
@@ -445,16 +448,6 @@ public class ValueAnimator extends Animator {
         }
         mDuration = duration;
         return this;
-    }
-
-    /**
-     * Gets the length of the animation. The default duration is 300 milliseconds.
-     * 
-     * @return The length of the animation, in milliseconds.
-     */
-    @Override
-    public long getDuration() {
-        return mDuration;
     }
 
     /**
@@ -966,8 +959,8 @@ public class ValueAnimator extends Animator {
     public String toString() {
         String returnVal = "ValueAnimator@" + Integer.toHexString(hashCode());
         if (mValues != null) {
-            for (int i = 0; i < mValues.length; ++i) {
-                returnVal += "\n    " + mValues[i].toString();
+            for (PropertyValuesHolder mValue : mValues) {
+                returnVal += "\n    " + mValue.toString();
             }
         }
         return returnVal;

@@ -119,7 +119,6 @@ public class SwipeListView extends ListView {
      * @param swipeBackView  Back Identifier
      * @param swipeFrontView Front Identifier
      */
-    @SuppressWarnings("ucd")
     public SwipeListView(Context context, int swipeBackView, int swipeFrontView) {
         super(context);
         this.swipeFrontView = swipeFrontView;
@@ -130,7 +129,6 @@ public class SwipeListView extends ListView {
     /**
      * @see android.widget.ListView#ListView(android.content.Context, android.util.AttributeSet)
      */
-    @SuppressWarnings("ucd")
     public SwipeListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(attrs);
@@ -139,7 +137,6 @@ public class SwipeListView extends ListView {
     /**
      * @see android.widget.ListView#ListView(android.content.Context, android.util.AttributeSet, int)
      */
-    @SuppressWarnings("ucd")
     public SwipeListView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(attrs);
@@ -643,7 +640,6 @@ public class SwipeListView extends ListView {
         final int xDiff = (int) Math.abs(x - lastMotionX);
         final int yDiff = (int) Math.abs(y - lastMotionY);
 
-        final int touchSlop = this.touchSlop;
         boolean xMoved = xDiff > touchSlop;
         boolean yMoved = yDiff > touchSlop;
 
