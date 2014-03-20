@@ -154,16 +154,7 @@ class PropertyValuesHolder implements Cloneable {
         return new IntPropertyValuesHolder(propertyName, values);
     }
 
-    /**
-     * Constructs and returns a PropertyValuesHolder with a given property and
-     * set of int values.
-     * @param property The property being animated. Should not be null.
-     * @param values The values that the property will animate between.
-     * @return PropertyValuesHolder The constructed PropertyValuesHolder object.
-     */
-    public static PropertyValuesHolder ofInt(Property<?, Integer> property, int... values) {
-        return new IntPropertyValuesHolder(property, values);
-    }
+    
 
     /**
      * Constructs and returns a PropertyValuesHolder with a given property name and
@@ -176,16 +167,7 @@ class PropertyValuesHolder implements Cloneable {
         return new FloatPropertyValuesHolder(propertyName, values);
     }
 
-    /**
-     * Constructs and returns a PropertyValuesHolder with a given property and
-     * set of float values.
-     * @param property The property being animated. Should not be null.
-     * @param values The values that the property will animate between.
-     * @return PropertyValuesHolder The constructed PropertyValuesHolder object.
-     */
-    public static PropertyValuesHolder ofFloat(Property<?, Float> property, float... values) {
-        return new FloatPropertyValuesHolder(property, values);
-    }
+    
 
     /**
      * Constructs and returns a PropertyValuesHolder with a given property name and
@@ -207,25 +189,7 @@ class PropertyValuesHolder implements Cloneable {
         return pvh;
     }
 
-    /**
-     * Constructs and returns a PropertyValuesHolder with a given property and
-     * set of Object values. This variant also takes a TypeEvaluator because the system
-     * cannot automatically interpolate between objects of unknown type.
-     *
-     * @param property The property being animated. Should not be null.
-     * @param evaluator A TypeEvaluator that will be called on each animation frame to
-     * provide the necessary interpolation between the Object values to derive the animated
-     * value.
-     * @param values The values that the property will animate between.
-     * @return PropertyValuesHolder The constructed PropertyValuesHolder object.
-     */
-    public static <V> PropertyValuesHolder ofObject(Property property,
-            TypeEvaluator<V> evaluator, V... values) {
-        PropertyValuesHolder pvh = new PropertyValuesHolder(property);
-        pvh.setObjectValues(values);
-        pvh.setEvaluator(evaluator);
-        return pvh;
-    }
+    
 
     
 
@@ -430,52 +394,7 @@ class PropertyValuesHolder implements Cloneable {
         mGetter = setupSetterOrGetter(targetClass, sGetterPropertyMap, "get", null);
     }
 
-    /**
-     * Internal function (called from ObjectAnimator) to set up the setter and getter
-     * prior to running the animation. If the setter has not been manually set for this
-     * object, it will be derived automatically given the property name, target object, and
-     * types of values supplied. If no getter has been set, it will be supplied iff any of the
-     * supplied values was null. If there is a null value, then the getter (supplied or derived)
-     * will be called to set those null values to the current value of the property
-     * on the target object.
-     * @param target The object on which the setter (and possibly getter) exist.
-     */
-    void setupSetterAndGetter(Object target) {
-        if (mProperty != null) {
-            // check to make sure that mProperty is on the class of target
-            try {
-                Object testValue = mProperty.get(target);
-                for (Keyframe kf : mKeyframeSet.mKeyframes) {
-                    if (!kf.hasValue()) {
-                        kf.setValue(mProperty.get(target));
-                    }
-                }
-                return;
-            } catch (ClassCastException e) {
-                Log.e("PropertyValuesHolder","No such property (" + mProperty.getName() +
-                        ") on target object " + target + ". Trying reflection instead");
-                mProperty = null;
-            }
-        }
-        Class targetClass = target.getClass();
-        if (mSetter == null) {
-            setupSetter(targetClass);
-        }
-        for (Keyframe kf : mKeyframeSet.mKeyframes) {
-            if (!kf.hasValue()) {
-                if (mGetter == null) {
-                    setupGetter(targetClass);
-                }
-                try {
-                    kf.setValue(mGetter.invoke(target));
-                } catch (InvocationTargetException e) {
-                    Log.e("PropertyValuesHolder", e.toString());
-                } catch (IllegalAccessException e) {
-                    Log.e("PropertyValuesHolder", e.toString());
-                }
-            }
-        }
-    }
+    
 
     /**
      * Utility function to set the value stored in a particular Keyframe. The value used is
@@ -500,31 +419,7 @@ class PropertyValuesHolder implements Cloneable {
             Log.e("PropertyValuesHolder", e.toString());
         }
     }
-
-    /**
-     * This function is called by ObjectAnimator when setting the start values for an animation.
-     * The start values are set according to the current values in the target object. The
-     * property whose value is extracted is whatever is specified by the propertyName of this
-     * PropertyValuesHolder object.
-     *
-     * @param target The object which holds the start values that should be set.
-     */
-    void setupStartValue(Object target) {
-        setupValue(target, mKeyframeSet.mKeyframes.get(0));
-    }
-
-    /**
-     * This function is called by ObjectAnimator when setting the end values for an animation.
-     * The end values are set according to the current values in the target object. The
-     * property whose value is extracted is whatever is specified by the propertyName of this
-     * PropertyValuesHolder object.
-     *
-     * @param target The object which holds the start values that should be set.
-     */
-    void setupEndValue(Object target) {
-        setupValue(target, mKeyframeSet.mKeyframes.get(mKeyframeSet.mKeyframes.size() - 1));
-    }
-
+    
     @Override
     public PropertyValuesHolder clone() {
         try {

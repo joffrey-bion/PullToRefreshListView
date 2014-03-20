@@ -148,21 +148,7 @@ public abstract class Animator implements Cloneable {
         mListeners.add(listener);
     }
 
-    /**
-     * Removes a listener from the set listening to this animation.
-     *
-     * @param listener the listener to be removed from the current set of listeners for this
-     *                 animation.
-     */
-    public void removeListener(AnimatorListener listener) {
-        if (mListeners == null) {
-            return;
-        }
-        mListeners.remove(listener);
-        if (mListeners.size() == 0) {
-            mListeners = null;
-        }
-    }
+    
 
     /**
      * Gets the set of {@link android.animation.Animator.AnimatorListener} objects that are currently
@@ -194,29 +180,9 @@ public abstract class Animator implements Cloneable {
         }
     }
 
-    /**
-     * This method tells the object to use appropriate information to extract
-     * starting values for the animation. For example, a AnimatorSet object will pass
-     * this call to its child objects to tell them to set up the values. A
-     * ObjectAnimator object will use the information it has about its target object
-     * and PropertyValuesHolder objects to get the start values for its properties.
-     * An ValueAnimator object will ignore the request since it does not have enough
-     * information (such as a target object) to gather these values.
-     */
-    public void setupStartValues() {
-    }
+    
 
-    /**
-     * This method tells the object to use appropriate information to extract
-     * ending values for the animation. For example, a AnimatorSet object will pass
-     * this call to its child objects to tell them to set up the values. A
-     * ObjectAnimator object will use the information it has about its target object
-     * and PropertyValuesHolder objects to get the start values for its properties.
-     * An ValueAnimator object will ignore the request since it does not have enough
-     * information (such as a target object) to gather these values.
-     */
-    public void setupEndValues() {
-    }
+    
 
     /**
      * Sets the target object whose property will be animated by this animation. Not all subclasses

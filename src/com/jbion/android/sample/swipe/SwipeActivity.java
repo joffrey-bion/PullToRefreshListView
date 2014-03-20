@@ -41,6 +41,7 @@ public class SwipeActivity extends ListActivity {
 		return true;
 	}
 
+	@SuppressWarnings("ucd")
 	public class SwipeListAdapter extends BaseAdapter {
 
 		private Context context;

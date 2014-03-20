@@ -19,6 +19,7 @@ import com.jbion.android.pulltorefresh.R;
 /**
  * ListView subclass that provides the swipe functionality
  */
+@SuppressWarnings("ucd")
 public class SwipeListView extends ListView {
 
     /**

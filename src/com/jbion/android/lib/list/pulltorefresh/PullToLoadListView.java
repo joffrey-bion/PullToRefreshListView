@@ -9,6 +9,7 @@ import android.widget.AbsListView.OnScrollListener;
 
 import com.jbion.android.pulltorefresh.R;
 
+@SuppressWarnings("ucd")
 public class PullToLoadListView extends PullToRefreshListView implements OnScrollListener {
 
 	/**
