@@ -113,18 +113,9 @@ class ViewPropertyAnimatorPreHC extends ViewPropertyAnimator {
      */
     private static final int NONE = 0x0000;
     private static final int TRANSLATION_X = 0x0001;
-    private static final int TRANSLATION_Y = 0x0002;
-    private static final int SCALE_X = 0x0004;
-    private static final int SCALE_Y = 0x0008;
-    private static final int ROTATION = 0x0010;
-    private static final int ROTATION_X = 0x0020;
-    private static final int ROTATION_Y = 0x0040;
-    private static final int X = 0x0080;
-    private static final int Y = 0x0100;
     private static final int ALPHA = 0x0200;
 
-    private static final int TRANSFORM_MASK = TRANSLATION_X | TRANSLATION_Y | SCALE_X | SCALE_Y
-            | ROTATION | ROTATION_X | ROTATION_Y | X | Y;
+    private static final int TRANSFORM_MASK = TRANSLATION_X;
 
     /**
      * The mechanism by which the user can request several properties that are then
@@ -378,38 +369,6 @@ class ViewPropertyAnimatorPreHC extends ViewPropertyAnimator {
             // info.mTranslationX = value;
             mProxy.setTranslationX(value);
             break;
-        case TRANSLATION_Y:
-            // info.mTranslationY = value;
-            mProxy.setTranslationY(value);
-            break;
-        case ROTATION:
-            // info.mRotation = value;
-            mProxy.setRotation(value);
-            break;
-        case ROTATION_X:
-            // info.mRotationX = value;
-            mProxy.setRotationX(value);
-            break;
-        case ROTATION_Y:
-            // info.mRotationY = value;
-            mProxy.setRotationY(value);
-            break;
-        case SCALE_X:
-            // info.mScaleX = value;
-            mProxy.setScaleX(value);
-            break;
-        case SCALE_Y:
-            // info.mScaleY = value;
-            mProxy.setScaleY(value);
-            break;
-        case X:
-            // info.mTranslationX = value - mView.mLeft;
-            mProxy.setX(value);
-            break;
-        case Y:
-            // info.mTranslationY = value - mView.mTop;
-            mProxy.setY(value);
-            break;
         case ALPHA:
             // info.mAlpha = value;
             mProxy.setAlpha(value);
@@ -430,30 +389,6 @@ class ViewPropertyAnimatorPreHC extends ViewPropertyAnimator {
         case TRANSLATION_X:
             // return info.mTranslationX;
             return mProxy.getTranslationX();
-        case TRANSLATION_Y:
-            // return info.mTranslationY;
-            return mProxy.getTranslationY();
-        case ROTATION:
-            // return info.mRotation;
-            return mProxy.getRotation();
-        case ROTATION_X:
-            // return info.mRotationX;
-            return mProxy.getRotationX();
-        case ROTATION_Y:
-            // return info.mRotationY;
-            return mProxy.getRotationY();
-        case SCALE_X:
-            // return info.mScaleX;
-            return mProxy.getScaleX();
-        case SCALE_Y:
-            // return info.mScaleY;
-            return mProxy.getScaleY();
-        case X:
-            // return mView.mLeft + info.mTranslationX;
-            return mProxy.getX();
-        case Y:
-            // return mView.mTop + info.mTranslationY;
-            return mProxy.getY();
         case ALPHA:
             // return info.mAlpha;
             return mProxy.getAlpha();

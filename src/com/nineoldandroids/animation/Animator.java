@@ -71,15 +71,6 @@ public abstract class Animator implements Cloneable {
      * </p>
      */
     public void end() {}
-
-    /**
-     * The amount of time, in milliseconds, to delay starting the animation after
-     * {@link #start()} is called.
-     * 
-     * @return the number of milliseconds to delay running the animation
-     */
-    public abstract long getStartDelay();
-
     /**
      * The amount of time, in milliseconds, to delay starting the animation after
      * {@link #start()} is called.
@@ -115,22 +106,6 @@ public abstract class Animator implements Cloneable {
      * @return Whether the Animator is running.
      */
     public abstract boolean isRunning();
-
-    /**
-     * Returns whether this Animator has been started and not yet ended. This state
-     * is a superset of the state of {@link #isRunning()}, because an Animator with a
-     * nonzero {@link #getStartDelay() startDelay} will return true for
-     * {@link #isStarted()} during the delay phase, whereas {@link #isRunning()} will
-     * return true only after the delay phase is complete.
-     * 
-     * @return Whether the Animator has been started and not yet ended.
-     */
-    public boolean isStarted() {
-        // Default method returns value for isRunning(). Subclasses should override
-        // to return a
-        // real value.
-        return isRunning();
-    }
 
     /**
      * Adds a listener to the set of listeners that are sent events through the life

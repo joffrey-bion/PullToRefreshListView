@@ -110,18 +110,9 @@ class ViewPropertyAnimatorHC extends ViewPropertyAnimator {
      */
     private static final int NONE = 0x0000;
     private static final int TRANSLATION_X = 0x0001;
-    private static final int TRANSLATION_Y = 0x0002;
-    private static final int SCALE_X = 0x0004;
-    private static final int SCALE_Y = 0x0008;
-    private static final int ROTATION = 0x0010;
-    private static final int ROTATION_X = 0x0020;
-    private static final int ROTATION_Y = 0x0040;
-    private static final int X = 0x0080;
-    private static final int Y = 0x0100;
     private static final int ALPHA = 0x0200;
 
-    private static final int TRANSFORM_MASK = TRANSLATION_X | TRANSLATION_Y | SCALE_X | SCALE_Y
-            | ROTATION | ROTATION_X | ROTATION_Y | X | Y;
+    private static final int TRANSFORM_MASK = TRANSLATION_X;
 
     /**
      * The mechanism by which the user can request several properties that are then
@@ -376,38 +367,6 @@ class ViewPropertyAnimatorHC extends ViewPropertyAnimator {
                 // info.mTranslationX = value;
                 v.setTranslationX(value);
                 break;
-            case TRANSLATION_Y:
-                // info.mTranslationY = value;
-                v.setTranslationY(value);
-                break;
-            case ROTATION:
-                // info.mRotation = value;
-                v.setRotation(value);
-                break;
-            case ROTATION_X:
-                // info.mRotationX = value;
-                v.setRotationX(value);
-                break;
-            case ROTATION_Y:
-                // info.mRotationY = value;
-                v.setRotationY(value);
-                break;
-            case SCALE_X:
-                // info.mScaleX = value;
-                v.setScaleX(value);
-                break;
-            case SCALE_Y:
-                // info.mScaleY = value;
-                v.setScaleY(value);
-                break;
-            case X:
-                // info.mTranslationX = value - v.mLeft;
-                v.setX(value);
-                break;
-            case Y:
-                // info.mTranslationY = value - v.mTop;
-                v.setY(value);
-                break;
             case ALPHA:
                 // info.mAlpha = value;
                 v.setAlpha(value);
@@ -431,30 +390,6 @@ class ViewPropertyAnimatorHC extends ViewPropertyAnimator {
             case TRANSLATION_X:
                 // return info.mTranslationX;
                 return v.getTranslationX();
-            case TRANSLATION_Y:
-                // return info.mTranslationY;
-                return v.getTranslationY();
-            case ROTATION:
-                // return info.mRotation;
-                return v.getRotation();
-            case ROTATION_X:
-                // return info.mRotationX;
-                return v.getRotationX();
-            case ROTATION_Y:
-                // return info.mRotationY;
-                return v.getRotationY();
-            case SCALE_X:
-                // return info.mScaleX;
-                return v.getScaleX();
-            case SCALE_Y:
-                // return info.mScaleY;
-                return v.getScaleY();
-            case X:
-                // return v.mLeft + info.mTranslationX;
-                return v.getX();
-            case Y:
-                // return v.mTop + info.mTranslationY;
-                return v.getY();
             case ALPHA:
                 // return info.mAlpha;
                 return v.getAlpha();

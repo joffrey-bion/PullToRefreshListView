@@ -14,13 +14,14 @@ import android.widget.ListView;
 
 import java.util.List;
 
+import com.jbion.android.lib.list.pulltorefresh.PullToLoadListView;
 import com.jbion.android.pulltorefresh.R;
 
 /**
  * ListView subclass that provides the swipe functionality
  */
 @SuppressWarnings("ucd")
-public class SwipeListView extends ListView {
+public class SwipeListView extends PullToLoadListView {
 
     /**
      * Used when user want change swipe list mode on some rows
@@ -111,13 +112,16 @@ public class SwipeListView extends ListView {
      */
     private SwipeListViewTouchListener touchListener;
 
-
     /**
-     * If you create a View programmatically you need send back and front identifier
-     *
-     * @param context        Context
-     * @param swipeBackView  Back Identifier
-     * @param swipeFrontView Front Identifier
+     * If you create a SwipeListView programmatically you need to specifiy back and
+     * front identifier.
+     * 
+     * @param context
+     *            Context
+     * @param swipeBackView
+     *            Back view resource identifier
+     * @param swipeFrontView
+     *            Front view resource identifier
      */
     public SwipeListView(Context context, int swipeBackView, int swipeFrontView) {
         super(context);
@@ -127,7 +131,8 @@ public class SwipeListView extends ListView {
     }
 
     /**
-     * @see android.widget.ListView#ListView(android.content.Context, android.util.AttributeSet)
+     * @see android.widget.ListView#ListView(android.content.Context,
+     *      android.util.AttributeSet)
      */
     public SwipeListView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -135,7 +140,8 @@ public class SwipeListView extends ListView {
     }
 
     /**
-     * @see android.widget.ListView#ListView(android.content.Context, android.util.AttributeSet, int)
+     * @see android.widget.ListView#ListView(android.content.Context,
+     *      android.util.AttributeSet, int)
      */
     public SwipeListView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -144,8 +150,9 @@ public class SwipeListView extends ListView {
 
     /**
      * Init ListView
-     *
-     * @param attrs AttributeSet
+     * 
+     * @param attrs
+     *            AttributeSet
      */
     private void init(AttributeSet attrs) {
 
@@ -162,27 +169,41 @@ public class SwipeListView extends ListView {
         int swipeActionRight = SWIPE_ACTION_REVEAL;
 
         if (attrs != null) {
-            TypedArray styled = getContext().obtainStyledAttributes(attrs, R.styleable.SwipeListView);
+            TypedArray styled = getContext().obtainStyledAttributes(attrs,
+                    R.styleable.SwipeListView);
             swipeMode = styled.getInt(R.styleable.SwipeListView_swipeMode, SWIPE_MODE_BOTH);
-            swipeActionLeft = styled.getInt(R.styleable.SwipeListView_swipeActionLeft, SWIPE_ACTION_REVEAL);
-            swipeActionRight = styled.getInt(R.styleable.SwipeListView_swipeActionRight, SWIPE_ACTION_REVEAL);
+            swipeActionLeft = styled.getInt(R.styleable.SwipeListView_swipeActionLeft,
+                    SWIPE_ACTION_REVEAL);
+            swipeActionRight = styled.getInt(R.styleable.SwipeListView_swipeActionRight,
+                    SWIPE_ACTION_REVEAL);
             swipeOffsetLeft = styled.getDimension(R.styleable.SwipeListView_swipeOffsetLeft, 0);
             swipeOffsetRight = styled.getDimension(R.styleable.SwipeListView_swipeOffsetRight, 0);
-            swipeOpenOnLongPress = styled.getBoolean(R.styleable.SwipeListView_swipeOpenOnLongPress, true);
+            swipeOpenOnLongPress = styled.getBoolean(
+                    R.styleable.SwipeListView_swipeOpenOnLongPress, true);
             swipeAnimationTime = styled.getInteger(R.styleable.SwipeListView_swipeAnimationTime, 0);
-            swipeCloseAllItemsWhenMoveList = styled.getBoolean(R.styleable.SwipeListView_swipeCloseAllItemsWhenMoveList, true);
-            swipeDrawableChecked = styled.getResourceId(R.styleable.SwipeListView_swipeDrawableChecked, 0);
-            swipeDrawableUnchecked = styled.getResourceId(R.styleable.SwipeListView_swipeDrawableUnchecked, 0);
+            swipeCloseAllItemsWhenMoveList = styled.getBoolean(
+                    R.styleable.SwipeListView_swipeCloseAllItemsWhenMoveList, true);
+            swipeDrawableChecked = styled.getResourceId(
+                    R.styleable.SwipeListView_swipeDrawableChecked, 0);
+            swipeDrawableUnchecked = styled.getResourceId(
+                    R.styleable.SwipeListView_swipeDrawableUnchecked, 0);
             swipeFrontView = styled.getResourceId(R.styleable.SwipeListView_swipeFrontView, 0);
             swipeBackView = styled.getResourceId(R.styleable.SwipeListView_swipeBackView, 0);
+            styled.recycle();
         }
 
         if (swipeFrontView == 0 || swipeBackView == 0) {
-            swipeFrontView = getContext().getResources().getIdentifier(SWIPE_DEFAULT_FRONT_VIEW, "id", getContext().getPackageName());
-            swipeBackView = getContext().getResources().getIdentifier(SWIPE_DEFAULT_BACK_VIEW, "id", getContext().getPackageName());
+            // try default views ids
+            swipeFrontView = getContext().getResources().getIdentifier(SWIPE_DEFAULT_FRONT_VIEW,
+                    "id", getContext().getPackageName());
+            swipeBackView = getContext().getResources().getIdentifier(SWIPE_DEFAULT_BACK_VIEW,
+                    "id", getContext().getPackageName());
 
             if (swipeFrontView == 0 || swipeBackView == 0) {
-                throw new RuntimeException(String.format("You forgot the attributes swipeFrontView or swipeBackView. You can add this attributes or use '%s' and '%s' identifiers", SWIPE_DEFAULT_FRONT_VIEW, SWIPE_DEFAULT_BACK_VIEW));
+                throw new RuntimeException(
+                        String.format(
+                                "Missing attribute swipeFrontView or swipeBackView. You can add these attributes or use '%s' and '%s' identifiers",
+                                SWIPE_DEFAULT_FRONT_VIEW, SWIPE_DEFAULT_BACK_VIEW));
             }
         }
 
@@ -206,10 +227,13 @@ public class SwipeListView extends ListView {
     }
 
     /**
-     * Recycle cell. This method should be called from getView in Adapter when use SWIPE_ACTION_CHOICE
-     *
-     * @param convertView parent view
-     * @param position    position in list
+     * Recycle cell. This method should be called from getView in Adapter when using
+     * SWIPE_ACTION_CHOICE
+     * 
+     * @param convertView
+     *            parent view
+     * @param position
+     *            position in list
      */
     public void recycle(View convertView, int position) {
         touchListener.reloadChoiceStateInView(convertView.findViewById(swipeFrontView), position);
@@ -217,8 +241,9 @@ public class SwipeListView extends ListView {
 
     /**
      * Get if item is selected
-     *
-     * @param position position in list
+     * 
+     * @param position
+     *            position in list
      * @return
      */
     public boolean isChecked(int position) {
@@ -227,7 +252,7 @@ public class SwipeListView extends ListView {
 
     /**
      * Get positions selected
-     *
+     * 
      * @return
      */
     public List<Integer> getPositionsSelected() {
@@ -236,7 +261,7 @@ public class SwipeListView extends ListView {
 
     /**
      * Count selected
-     *
+     * 
      * @return
      */
     public int getCountSelected() {
@@ -269,8 +294,9 @@ public class SwipeListView extends ListView {
 
     /**
      * Dismiss item
-     *
-     * @param position Position that you want open
+     * 
+     * @param position
+     *            Position that you want open
      */
     public void dismiss(int position) {
         int height = touchListener.dismiss(position);
@@ -310,8 +336,9 @@ public class SwipeListView extends ListView {
 
     /**
      * Open ListView's item
-     *
-     * @param position Position that you want open
+     * 
+     * @param position
+     *            Position that you want open
      */
     public void openAnimate(int position) {
         touchListener.openAnimate(position);
@@ -319,8 +346,9 @@ public class SwipeListView extends ListView {
 
     /**
      * Close ListView's item
-     *
-     * @param position Position that you want open
+     * 
+     * @param position
+     *            Position that you want open
      */
     public void closeAnimate(int position) {
         touchListener.closeAnimate(position);
@@ -328,8 +356,9 @@ public class SwipeListView extends ListView {
 
     /**
      * Notifies onDismiss
-     *
-     * @param reverseSortedPositions All dismissed positions
+     * 
+     * @param reverseSortedPositions
+     *            All dismissed positions
      */
     protected void onDismiss(int[] reverseSortedPositions) {
         if (swipeListViewListener != null) {
@@ -339,10 +368,13 @@ public class SwipeListView extends ListView {
 
     /**
      * Start open item
-     *
-     * @param position list item
-     * @param action   current action
-     * @param right    to right
+     * 
+     * @param position
+     *            list item
+     * @param action
+     *            current action
+     * @param right
+     *            to right
      */
     protected void onStartOpen(int position, int action, boolean right) {
         if (swipeListViewListener != null && position != ListView.INVALID_POSITION) {
@@ -352,8 +384,9 @@ public class SwipeListView extends ListView {
 
     /**
      * Start close item
-     *
-     * @param position list item
+     * 
+     * @param position
+     *            list item
      * @param right
      */
     protected void onStartClose(int position, boolean right) {
@@ -364,8 +397,9 @@ public class SwipeListView extends ListView {
 
     /**
      * Notifies onClickFrontView
-     *
-     * @param position item clicked
+     * 
+     * @param position
+     *            item clicked
      */
     protected void onClickFrontView(int position) {
         if (swipeListViewListener != null && position != ListView.INVALID_POSITION) {
@@ -375,8 +409,9 @@ public class SwipeListView extends ListView {
 
     /**
      * Notifies onClickBackView
-     *
-     * @param position back item clicked
+     * 
+     * @param position
+     *            back item clicked
      */
     protected void onClickBackView(int position) {
         if (swipeListViewListener != null && position != ListView.INVALID_POSITION) {
@@ -386,9 +421,11 @@ public class SwipeListView extends ListView {
 
     /**
      * Notifies onOpened
-     *
-     * @param position Item opened
-     * @param toRight  If should be opened toward the right
+     * 
+     * @param position
+     *            Item opened
+     * @param toRight
+     *            If should be opened toward the right
      */
     protected void onOpened(int position, boolean toRight) {
         if (swipeListViewListener != null && position != ListView.INVALID_POSITION) {
@@ -398,9 +435,11 @@ public class SwipeListView extends ListView {
 
     /**
      * Notifies onClosed
-     *
-     * @param position  Item closed
-     * @param fromRight If open from right
+     * 
+     * @param position
+     *            Item closed
+     * @param fromRight
+     *            If open from right
      */
     protected void onClosed(int position, boolean fromRight) {
         if (swipeListViewListener != null && position != ListView.INVALID_POSITION) {
@@ -410,9 +449,11 @@ public class SwipeListView extends ListView {
 
     /**
      * Notifies onChoiceChanged
-     *
-     * @param position position that choice
-     * @param selected if item is selected or not
+     * 
+     * @param position
+     *            position that choice
+     * @param selected
+     *            if item is selected or not
      */
     protected void onChoiceChanged(int position, boolean selected) {
         if (swipeListViewListener != null && position != ListView.INVALID_POSITION) {
@@ -467,9 +508,11 @@ public class SwipeListView extends ListView {
 
     /**
      * Notifies onMove
-     *
-     * @param position Item moving
-     * @param x        Current position
+     * 
+     * @param position
+     *            Item moving
+     * @param x
+     *            Current position
      */
     protected void onMove(int position, float x) {
         if (swipeListViewListener != null && position != ListView.INVALID_POSITION) {
@@ -486,8 +529,9 @@ public class SwipeListView extends ListView {
 
     /**
      * Sets the Listener
-     *
-     * @param swipeListViewListener Listener
+     * 
+     * @param swipeListViewListener
+     *            Listener
      */
     public void setSwipeListViewListener(SwipeListViewListener swipeListViewListener) {
         this.swipeListViewListener = swipeListViewListener;
@@ -502,8 +546,9 @@ public class SwipeListView extends ListView {
 
     /**
      * Set offset on right
-     *
-     * @param offsetRight Offset
+     * 
+     * @param offsetRight
+     *            Offset
      */
     public void setOffsetRight(float offsetRight) {
         touchListener.setRightOffset(offsetRight);
@@ -511,8 +556,9 @@ public class SwipeListView extends ListView {
 
     /**
      * Set offset on left
-     *
-     * @param offsetLeft Offset
+     * 
+     * @param offsetLeft
+     *            Offset
      */
     public void setOffsetLeft(float offsetLeft) {
         touchListener.setLeftOffset(offsetLeft);
@@ -520,7 +566,7 @@ public class SwipeListView extends ListView {
 
     /**
      * Set if all items opened will be closed when the user moves the ListView
-     *
+     * 
      * @param swipeCloseAllItemsWhenMoveList
      */
     public void setSwipeCloseAllItemsWhenMoveList(boolean swipeCloseAllItemsWhenMoveList) {
@@ -529,7 +575,7 @@ public class SwipeListView extends ListView {
 
     /**
      * Sets if the user can open an item with long pressing on cell
-     *
+     * 
      * @param swipeOpenOnLongPress
      */
     public void setSwipeOpenOnLongPress(boolean swipeOpenOnLongPress) {
@@ -538,7 +584,7 @@ public class SwipeListView extends ListView {
 
     /**
      * Set swipe mode
-     *
+     * 
      * @param swipeMode
      */
     public void setSwipeMode(int swipeMode) {
@@ -547,7 +593,7 @@ public class SwipeListView extends ListView {
 
     /**
      * Return action on left
-     *
+     * 
      * @return Action
      */
     public int getSwipeActionLeft() {
@@ -556,8 +602,9 @@ public class SwipeListView extends ListView {
 
     /**
      * Set action on left
-     *
-     * @param swipeActionLeft Action
+     * 
+     * @param swipeActionLeft
+     *            Action
      */
     public void setSwipeActionLeft(int swipeActionLeft) {
         touchListener.setSwipeActionLeft(swipeActionLeft);
@@ -565,7 +612,7 @@ public class SwipeListView extends ListView {
 
     /**
      * Return action on right
-     *
+     * 
      * @return Action
      */
     public int getSwipeActionRight() {
@@ -574,8 +621,9 @@ public class SwipeListView extends ListView {
 
     /**
      * Set action on right
-     *
-     * @param swipeActionRight Action
+     * 
+     * @param swipeActionRight
+     *            Action
      */
     public void setSwipeActionRight(int swipeActionRight) {
         touchListener.setSwipeActionRight(swipeActionRight);
@@ -583,8 +631,9 @@ public class SwipeListView extends ListView {
 
     /**
      * Sets animation time when user drops cell
-     *
-     * @param animationTime milliseconds
+     * 
+     * @param animationTime
+     *            milliseconds
      */
     public void setAnimationTime(long animationTime) {
         touchListener.setAnimationTime(animationTime);
@@ -606,24 +655,24 @@ public class SwipeListView extends ListView {
             }
 
             switch (action) {
-                case MotionEvent.ACTION_MOVE:
-                    checkInMoving(x, y);
-                    return touchState == TOUCH_STATE_SCROLLING_Y;
-                case MotionEvent.ACTION_DOWN:
-                    super.onInterceptTouchEvent(ev);
-                    touchListener.onTouch(this, ev);
-                    touchState = TOUCH_STATE_REST;
-                    lastMotionX = x;
-                    lastMotionY = y;
-                    return false;
-                case MotionEvent.ACTION_CANCEL:
-                    touchState = TOUCH_STATE_REST;
-                    break;
-                case MotionEvent.ACTION_UP:
-                    touchListener.onTouch(this, ev);
-                    return touchState == TOUCH_STATE_SCROLLING_Y;
-                default:
-                    break;
+            case MotionEvent.ACTION_MOVE:
+                checkInMoving(x, y);
+                return touchState == TOUCH_STATE_SCROLLING_Y;
+            case MotionEvent.ACTION_DOWN:
+                super.onInterceptTouchEvent(ev);
+                touchListener.onTouch(this, ev);
+                touchState = TOUCH_STATE_REST;
+                lastMotionX = x;
+                lastMotionY = y;
+                return false;
+            case MotionEvent.ACTION_CANCEL:
+                touchState = TOUCH_STATE_REST;
+                break;
+            case MotionEvent.ACTION_UP:
+                touchListener.onTouch(this, ev);
+                return touchState == TOUCH_STATE_SCROLLING_Y;
+            default:
+                break;
             }
         }
 
@@ -632,9 +681,11 @@ public class SwipeListView extends ListView {
 
     /**
      * Check if the user is moving the cell
-     *
-     * @param x Position X
-     * @param y Position Y
+     * 
+     * @param x
+     *            Position X
+     * @param y
+     *            Position Y
      */
     private void checkInMoving(float x, float y) {
         final int xDiff = (int) Math.abs(x - lastMotionX);

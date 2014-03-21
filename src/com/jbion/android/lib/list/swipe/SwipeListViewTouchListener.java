@@ -1,13 +1,14 @@
 package com.jbion.android.lib.list.swipe;
 
-import static com.nineoldandroids.view.ViewHelper.setAlpha;
-import static com.nineoldandroids.view.ViewHelper.setTranslationX;
-import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
+import android.animation.ValueAnimator.AnimatorUpdateListener;
+import android.annotation.TargetApi;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Handler;
@@ -21,11 +22,12 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.AnimatorListenerAdapter;
-import com.nineoldandroids.animation.AnimatorUpdateListener;
-import com.nineoldandroids.animation.ValueAnimator;
-import com.nineoldandroids.view.ViewHelper;
+// import com.nineoldandroids.animation.Animator;
+// import com.nineoldandroids.animation.AnimatorListenerAdapter;
+// import com.nineoldandroids.animation.AnimatorUpdateListener;
+// import com.nineoldandroids.animation.ValueAnimator;
+// import com.nineoldandroids.view.ViewHelper;
+// import com.nineoldandroids.view.ViewPropertyAnimator;
 
 /**
  * Touch listener impl for the SwipeListView
@@ -75,7 +77,6 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
     private boolean paused;
 
     private int swipeCurrentAction = SwipeListView.SWIPE_ACTION_NONE;
-
     private int swipeActionLeft = SwipeListView.SWIPE_ACTION_REVEAL;
     private int swipeActionRight = SwipeListView.SWIPE_ACTION_REVEAL;
 
@@ -516,8 +517,9 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
      * @param position
      *            list position
      */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     private void generateChoiceAnimate(final View view, final int position) {
-        animate(view).translationX(0).setDuration(animationTime)
+        view.animate().translationX(0).setDuration(animationTime)
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
@@ -541,6 +543,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
      * @param position
      *            Position of list
      */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     private void generateDismissAnimate(final View view, final boolean swap,
             final boolean swapRight, final int position) {
         int moveTo = 0;
@@ -562,7 +565,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
             alpha = 0;
         }
 
-        animate(view).translationX(moveTo).alpha(alpha).setDuration(animationTime)
+        view.animate().translationX(moveTo).alpha(alpha).setDuration(animationTime)
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
@@ -589,6 +592,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
      * @param position
      *            list position
      */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     private void generateRevealAnimate(final View view, final boolean swap,
             final boolean swapRight, final int position) {
         int moveTo = 0;
@@ -604,7 +608,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
             }
         }
 
-        animate(view).translationX(moveTo).setDuration(animationTime)
+        view.animate().translationX(moveTo).setDuration(animationTime)
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
@@ -912,6 +916,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
                         .setAction(MotionEvent.ACTION_CANCEL
                                 | (MotionEventCompat.getActionIndex(motionEvent) << MotionEventCompat.ACTION_POINTER_INDEX_SHIFT));
                 swipeListView.onTouchEvent(cancelEvent);
+                cancelEvent.recycle();
                 if (swipeCurrentAction == SwipeListView.SWIPE_ACTION_CHOICE) {
                     backView.setVisibility(View.GONE);
                 }
@@ -949,9 +954,10 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
      * @param deltaX
      *            delta
      */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void move(float deltaX) {
         swipeListView.onMove(downPosition, deltaX);
-        float posX = ViewHelper.getX(frontView);
+        float posX = frontView.getX();
         if (opened.get(downPosition)) {
             posX += openedRight.get(downPosition) ? -viewWidth + rightOffset : viewWidth
                     - leftOffset;
@@ -977,27 +983,29 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
             }
         }
         if (swipeCurrentAction == SwipeListView.SWIPE_ACTION_DISMISS) {
-            setTranslationX(parentView, deltaX);
-            setAlpha(parentView, Math.max(0f, Math.min(1f, 1f - 2f * Math.abs(deltaX) / viewWidth)));
+            parentView.setTranslationX(deltaX);
+            parentView.setAlpha(
+                    Math.max(0f, Math.min(1f, 1f - 2f * Math.abs(deltaX) / viewWidth)));
         } else if (swipeCurrentAction == SwipeListView.SWIPE_ACTION_CHOICE) {
             if ((swipingRight && deltaX > 0 && posX < DISPLACE_CHOICE)
                     || (!swipingRight && deltaX < 0 && posX > -DISPLACE_CHOICE)
                     || (swipingRight && deltaX < DISPLACE_CHOICE)
                     || (!swipingRight && deltaX > -DISPLACE_CHOICE)) {
-                setTranslationX(frontView, deltaX);
+                frontView.setTranslationX(deltaX);
             }
         } else {
-            setTranslationX(frontView, deltaX);
+            frontView.setTranslationX(deltaX);
         }
     }
 
     /**
      * Class that saves pending dismiss data
      */
-    class PendingDismissData implements Comparable<PendingDismissData> {
+    private class PendingDismissData implements Comparable<PendingDismissData> {
         private int position;
         private View view;
 
+        @SuppressWarnings("ucd")
         public PendingDismissData(int position, View view) {
             this.position = position;
             this.view = view;
@@ -1018,6 +1026,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
      * @param dismissPosition
      *            Position of list
      */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     protected void performDismiss(final View dismissView, final int dismissPosition,
             boolean doPendingDismiss) {
         final ViewGroup.LayoutParams lp = dismissView.getLayoutParams();
@@ -1063,6 +1072,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
         }, animationTime + 100);
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void removePendingDismisses(int originalHeight) {
         // No active animations, process all pending dismisses.
         // Sort by descending position
@@ -1078,8 +1088,8 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
         for (PendingDismissData pendingDismiss : pendingDismisses) {
             // Reset view presentation
             if (pendingDismiss.view != null) {
-                setAlpha(pendingDismiss.view, 1f);
-                setTranslationX(pendingDismiss.view, 0);
+                pendingDismiss.view.setAlpha(1f);
+                pendingDismiss.view.setTranslationX(0);
                 lp = pendingDismiss.view.getLayoutParams();
                 lp.height = originalHeight;
                 pendingDismiss.view.setLayoutParams(lp);

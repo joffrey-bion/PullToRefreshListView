@@ -13,7 +13,6 @@ class FloatKeyframe extends Keyframe {
         mFraction = fraction;
         mValue = value;
         mValueType = float.class;
-        mHasValue = true;
     }
 
     FloatKeyframe(float fraction) {
@@ -34,7 +33,6 @@ class FloatKeyframe extends Keyframe {
     public void setValue(Object value) {
         if (value != null && value.getClass() == Float.class) {
             mValue = ((Float)value).floatValue();
-            mHasValue = true;
         }
     }
 

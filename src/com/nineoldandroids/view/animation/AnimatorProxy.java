@@ -79,66 +79,6 @@ public final class AnimatorProxy extends Animation {
         }
     }
 
-    public float getRotation() {
-        return mRotationZ;
-    }
-
-    public void setRotation(float rotation) {
-        if (mRotationZ != rotation) {
-            prepareForUpdate();
-            mRotationZ = rotation;
-            invalidateAfterUpdate();
-        }
-    }
-
-    public float getRotationX() {
-        return mRotationX;
-    }
-
-    public void setRotationX(float rotationX) {
-        if (mRotationX != rotationX) {
-            prepareForUpdate();
-            mRotationX = rotationX;
-            invalidateAfterUpdate();
-        }
-    }
-
-    public float getRotationY() {
-        return mRotationY;
-    }
-
-    public void setRotationY(float rotationY) {
-        if (mRotationY != rotationY) {
-            prepareForUpdate();
-            mRotationY = rotationY;
-            invalidateAfterUpdate();
-        }
-    }
-
-    public float getScaleX() {
-        return mScaleX;
-    }
-
-    public void setScaleX(float scaleX) {
-        if (mScaleX != scaleX) {
-            prepareForUpdate();
-            mScaleX = scaleX;
-            invalidateAfterUpdate();
-        }
-    }
-
-    public float getScaleY() {
-        return mScaleY;
-    }
-
-    public void setScaleY(float scaleY) {
-        if (mScaleY != scaleY) {
-            prepareForUpdate();
-            mScaleY = scaleY;
-            invalidateAfterUpdate();
-        }
-    }
-
     public float getTranslationX() {
         return mTranslationX;
     }
@@ -151,46 +91,12 @@ public final class AnimatorProxy extends Animation {
         }
     }
 
-    public float getTranslationY() {
-        return mTranslationY;
-    }
-
-    public void setTranslationY(float translationY) {
-        if (mTranslationY != translationY) {
-            prepareForUpdate();
-            mTranslationY = translationY;
-            invalidateAfterUpdate();
-        }
-    }
-
     public float getX() {
         View view = mView.get();
         if (view == null) {
             return 0;
         }
         return view.getLeft() + mTranslationX;
-    }
-
-    public void setX(float x) {
-        View view = mView.get();
-        if (view != null) {
-            setTranslationX(x - view.getLeft());
-        }
-    }
-
-    public float getY() {
-        View view = mView.get();
-        if (view == null) {
-            return 0;
-        }
-        return view.getTop() + mTranslationY;
-    }
-
-    public void setY(float y) {
-        View view = mView.get();
-        if (view != null) {
-            setTranslationY(y - view.getTop());
-        }
     }
 
     private void prepareForUpdate() {

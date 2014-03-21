@@ -14,7 +14,6 @@ package com.nineoldandroids.animation;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import android.animation.ArgbEvaluator;
 import android.animation.TimeInterpolator;
 import android.os.Looper;
 import android.util.AndroidRuntimeException;
@@ -39,7 +38,7 @@ import android.view.animation.LinearInterpolator;
  * {@link ValueAnimator#setInterpolator(TimeInterpolator)}.
  * </p>
  */
-@SuppressWarnings({ "rawtypes", "unchecked", "javadoc" })
+@SuppressWarnings({ "unchecked", "javadoc" })
 public class ValueAnimator extends Animator {
 
     /**
@@ -195,12 +194,6 @@ public class ValueAnimator extends Animator {
     boolean mRunning = false;
 
     /**
-     * Additional playing state to indicate whether an animator has been start()'d,
-     * whether or not there is a nonzero startDelay.
-     */
-    private boolean mStarted = false;
-
-    /**
      * Flag that denotes whether the animation is set up and ready to go. Used to set
      * up animation that has not yet been started.
      */
@@ -280,7 +273,7 @@ public class ValueAnimator extends Animator {
      * use internally; the factory methods which take parameters are more generally
      * useful.
      */
-    public ValueAnimator() {}
+    private ValueAnimator() {}
 
     /**
      * Constructs and returns a ValueAnimator that animates between int values. A
@@ -492,17 +485,6 @@ public class ValueAnimator extends Animator {
      * The amount of time, in milliseconds, to delay starting the animation after
      * {@link #start()} is called.
      * 
-     * @return the number of milliseconds to delay running the animation
-     */
-    @Override
-    public long getStartDelay() {
-        return mStartDelay;
-    }
-
-    /**
-     * The amount of time, in milliseconds, to delay starting the animation after
-     * {@link #start()} is called.
-     * 
      * @param startDelay
      *            The amount of the delay, in milliseconds
      */
@@ -548,36 +530,6 @@ public class ValueAnimator extends Animator {
     }
 
     /**
-     * Defines how many times the animation should repeat. The default value is 0.
-     * 
-     * @return the number of times the animation should repeat, or {@link #INFINITE}
-     */
-    public int getRepeatCount() {
-        return mRepeatCount;
-    }
-
-    /**
-     * Defines what this animation should do when it reaches the end. This setting is
-     * applied only when the repeat count is either greater than 0 or
-     * {@link #INFINITE}. Defaults to {@link #RESTART}.
-     * 
-     * @param value
-     *            {@link #RESTART} or {@link #REVERSE}
-     */
-    public void setRepeatMode(int value) {
-        mRepeatMode = value;
-    }
-
-    /**
-     * Defines what this animation should do when it reaches the end.
-     * 
-     * @return either one of {@link #REVERSE} or {@link #RESTART}
-     */
-    public int getRepeatMode() {
-        return mRepeatMode;
-    }
-
-    /**
      * Adds a listener to the set of listeners that are sent update events through
      * the life of an animation. This method is called on all listeners for every
      * frame of the animation, after the values for the animation have been
@@ -614,42 +566,6 @@ public class ValueAnimator extends Animator {
     }
 
     /**
-     * Returns the timing interpolator that this ValueAnimator uses.
-     * 
-     * @return The timing interpolator for this ValueAnimator.
-     */
-    public/* Time */Interpolator getInterpolator() {
-        return mInterpolator;
-    }
-
-    /**
-     * The type evaluator to be used when calculating the animated values of this
-     * animation. The system will automatically assign a float or int evaluator based
-     * on the type of <code>startValue</code> and <code>endValue</code> in the
-     * constructor. But if these values are not one of these primitive types, or if
-     * different evaluation is desired (such as is necessary with int values that
-     * represent colors), a custom evaluator needs to be assigned. For example, when
-     * running an animation on color values, the {@link ArgbEvaluator} should be used
-     * to get correct RGB color interpolation.
-     * 
-     * <p>
-     * If this ValueAnimator has only one set of values being animated between, this
-     * evaluator will be used for that set. If there are several sets of values being
-     * animated, which is the case if PropertyValuesHOlder objects were set on the
-     * ValueAnimator, then the evaluator is assigned just to the first
-     * PropertyValuesHolder object.
-     * </p>
-     * 
-     * @param value
-     *            the evaluator to be used this animation
-     */
-    public void setEvaluator(TypeEvaluator value) {
-        if (value != null && mValues != null && mValues.length > 0) {
-            mValues[0].setEvaluator(value);
-        }
-    }
-
-    /**
      * Start the animation playing. This version of start() takes a boolean flag that
      * indicates whether the animation should play in reverse. The flag is usually
      * false, but may be set to true if called from the reverse() method.
@@ -672,7 +588,6 @@ public class ValueAnimator extends Animator {
         mPlayingBackwards = playBackwards;
         mCurrentIteration = 0;
         mPlayingState = STOPPED;
-        mStarted = true;
         mStartedDelay = false;
         sPendingAnimations.get().add(this);
         if (mStartDelay == 0) {
@@ -749,11 +664,6 @@ public class ValueAnimator extends Animator {
         return (mPlayingState == RUNNING || mRunning);
     }
 
-    @Override
-    public boolean isStarted() {
-        return mStarted;
-    }
-
     /**
      * Called internally to end an animation by removing it from the animations list.
      * Must be called on the UI thread.
@@ -772,7 +682,6 @@ public class ValueAnimator extends Animator {
             }
         }
         mRunning = false;
-        mStarted = false;
     }
 
     /**

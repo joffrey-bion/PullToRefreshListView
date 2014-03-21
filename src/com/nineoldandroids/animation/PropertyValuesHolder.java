@@ -139,41 +139,6 @@ class PropertyValuesHolder implements Cloneable {
         mKeyframeSet = KeyframeSet.ofFloat(values);
     }
 
-    /**
-     * Set the animated values for this object to this set of Keyframes.
-     * 
-     * @param values
-     *            One or more values that the animation will animate between.
-     */
-    public void setKeyframes(Keyframe... values) {
-        int numKeyframes = values.length;
-        Keyframe keyframes[] = new Keyframe[Math.max(numKeyframes, 2)];
-        mValueType = values[0].getType();
-        for (int i = 0; i < numKeyframes; ++i) {
-            keyframes[i] = values[i];
-        }
-        mKeyframeSet = new KeyframeSet(keyframes);
-    }
-
-    /**
-     * Set the animated values for this object to this set of Objects. If there is
-     * only one value, it is assumed to be the end value of an animation, and an
-     * initial value will be derived, if possible, by calling a getter function on
-     * the object. Also, if any value is null, the value will be filled in when the
-     * animation starts in the same way. This mechanism of automatically getting null
-     * values only works if the PropertyValuesHolder object is used in conjunction
-     * {@link ObjectAnimator}, and with a getter function derived automatically from
-     * <code>propertyName</code>, since otherwise PropertyValuesHolder has no way of
-     * determining what the value should be.
-     * 
-     * @param values
-     *            One or more values that the animation will animate between.
-     */
-    public void setObjectValues(Object... values) {
-        mValueType = values[0].getClass();
-        mKeyframeSet = KeyframeSet.ofObject(values);
-    }
-
     @Override
     public PropertyValuesHolder clone() {
         try {
@@ -208,23 +173,6 @@ class PropertyValuesHolder implements Cloneable {
     }
 
     /**
-     * The TypeEvaluator will the automatically determined based on the type of
-     * values supplied to PropertyValuesHolder. The evaluator can be manually set,
-     * however, if so desired. This may be important in cases where either the type
-     * of the values supplied do not match the way that they should be interpolated
-     * between, or if the values are of a custom type or one not currently understood
-     * by the animation system. Currently, only values of type float and int (and
-     * their Object equivalents: Float and Integer) are correctly interpolated; all
-     * other types require setting a TypeEvaluator.
-     * 
-     * @param evaluator
-     */
-    public void setEvaluator(TypeEvaluator evaluator) {
-        mEvaluator = evaluator;
-        mKeyframeSet.setEvaluator(evaluator);
-    }
-
-    /**
      * Function used to calculate the value according to the evaluator set up for
      * this PropertyValuesHolder object. This function is called by
      * ValueAnimator.animateValue().
@@ -234,27 +182,6 @@ class PropertyValuesHolder implements Cloneable {
      */
     void calculateValue(float fraction) {
         mAnimatedValue = mKeyframeSet.getValue(fraction);
-    }
-
-    /**
-     * Sets the name of the property that will be animated. This name is used to
-     * derive a setter function that will be called to set animated values. For
-     * example, a property name of <code>foo</code> will result in a call to the
-     * function <code>setFoo()</code> on the target object. If either
-     * <code>valueFrom</code> or <code>valueTo</code> is null, then a getter function
-     * will also be derived and called.
-     * 
-     * <p>
-     * Note that the setter function derived from this property name must take the
-     * same parameter type as the <code>valueFrom</code> and <code>valueTo</code>
-     * properties, otherwise the call to the setter function will fail.
-     * </p>
-     * 
-     * @param propertyName
-     *            The name of the property being animated.
-     */
-    public void setPropertyName(String propertyName) {
-        mPropertyName = propertyName;
     }
 
     /**
@@ -285,12 +212,4 @@ class PropertyValuesHolder implements Cloneable {
     public String toString() {
         return mPropertyName + ": " + mKeyframeSet.toString();
     }
-
-    // native static private int nGetIntMethod(Class targetClass, String methodName);
-    // native static private int nGetFloatMethod(Class targetClass, String
-    // methodName);
-    // native static private void nCallIntMethod(Object target, int methodID, int
-    // arg);
-    // native static private void nCallFloatMethod(Object target, int methodID, float
-    // arg);
 }
