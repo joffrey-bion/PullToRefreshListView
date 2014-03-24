@@ -33,12 +33,15 @@ import android.widget.AdapterView;
  * Touch listener impl for the SwipeListView
  */
 public class SwipeListViewTouchListener implements View.OnTouchListener {
+    
+    private static final String LOG_TAG = SwipeListViewTouchListener.class.getSimpleName();
 
     private static final int DISPLACE_CHOICE = 80;
 
     private int swipeMode = SwipeListView.SWIPE_MODE_BOTH;
     private boolean swipeOpenOnLongPress = true;
     private boolean swipeClosesAllItemsWhenListMoves = true;
+    private boolean swipeMultipleSelectEnabled = true;
 
     private int swipeFrontView = 0;
     private int swipeBackView = 0;
@@ -208,6 +211,15 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
      */
     public void setSwipeClosesAllItemsWhenListMoves(boolean swipeClosesAllItemsWhenListMoves) {
         this.swipeClosesAllItemsWhenListMoves = swipeClosesAllItemsWhenListMoves;
+    }
+
+    /**
+     * Set if all item opened will be close when the user move ListView
+     * 
+     * @param swipeMultipleSelectEnabled
+     */
+    public void setSwipeMultipleSelectEnabled(boolean swipeMultipleSelectEnabled) {
+        this.swipeMultipleSelectEnabled = swipeMultipleSelectEnabled;
     }
 
     /**
@@ -739,6 +751,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         if (!isSwipeEnabled()) {
+            Log.d(LOG_TAG, "onTouch XXXX returns false (swipe disabled)");
             return false;
         }
 
@@ -749,6 +762,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
         switch (MotionEventCompat.getActionMasked(motionEvent)) {
         case MotionEvent.ACTION_DOWN: {
             if (paused && downPosition != AdapterView.INVALID_POSITION) {
+                Log.d(LOG_TAG, "onTouch DOWN returns false");
                 return false;
             }
             swipeCurrentAction = SwipeListView.SWIPE_ACTION_NONE;
@@ -789,6 +803,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
                 }
             }
             view.onTouchEvent(motionEvent);
+            Log.d(LOG_TAG, "onTouch DOWN returns true");
             return true;
         }
 
@@ -927,11 +942,13 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
                             + leftOffset;
                 }
                 move(deltaX);
+                Log.d(LOG_TAG, "onTouch MOVE returns true");
                 return true;
             }
             break;
         }
         }
+        Log.d(LOG_TAG, "onTouch XXXX returns false");
         return false;
     }
 
@@ -983,8 +1000,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
         }
         if (swipeCurrentAction == SwipeListView.SWIPE_ACTION_DISMISS) {
             parentView.setTranslationX(deltaX);
-            parentView.setAlpha(
-                    Math.max(0f, Math.min(1f, 1f - 2f * Math.abs(deltaX) / viewWidth)));
+            parentView.setAlpha(Math.max(0f, Math.min(1f, 1f - 2f * Math.abs(deltaX) / viewWidth)));
         } else if (swipeCurrentAction == SwipeListView.SWIPE_ACTION_CHOICE) {
             if ((swipingRight && deltaX > 0 && posX < DISPLACE_CHOICE)
                     || (!swipingRight && deltaX < 0 && posX > -DISPLACE_CHOICE)

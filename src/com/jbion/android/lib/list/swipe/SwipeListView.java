@@ -6,6 +6,7 @@ import android.database.DataSetObserver;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewConfigurationCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -20,7 +21,9 @@ import com.jbion.android.pulltorefresh.R;
 /**
  * ListView subclass that provides the swipe functionality
  */
-public class SwipeListView extends PullToLoadListView {
+public class SwipeListView extends ListView {
+    
+    private static final String LOG_TAG = SwipeListView.class.getSimpleName();
 
     /**
      * Used when user want change swipe list mode on some rows
@@ -157,6 +160,7 @@ public class SwipeListView extends PullToLoadListView {
         int swipeMode = SWIPE_MODE_BOTH;
         boolean swipeOpenOnLongPress = true;
         boolean swipeCloseAllItemsWhenMoveList = true;
+        boolean swipeMultipleSelectEnabled = true;
         long swipeAnimationTime = 0;
         float swipeOffsetLeft = 0;
         float swipeOffsetRight = 0;
@@ -178,6 +182,8 @@ public class SwipeListView extends PullToLoadListView {
             swipeOffsetRight = styled.getDimension(R.styleable.SwipeListView_swipeOffsetRight, 0);
             swipeOpenOnLongPress = styled.getBoolean(
                     R.styleable.SwipeListView_swipeOpenOnLongPress, true);
+            swipeMultipleSelectEnabled = styled.getBoolean(
+                    R.styleable.SwipeListView_swipeMultipleSelectEnabled, true);
             swipeAnimationTime = styled.getInteger(R.styleable.SwipeListView_swipeAnimationTime, 0);
             swipeCloseAllItemsWhenMoveList = styled.getBoolean(
                     R.styleable.SwipeListView_swipeCloseAllItemsWhenMoveList, true);
@@ -217,11 +223,12 @@ public class SwipeListView extends PullToLoadListView {
         touchListener.setSwipeActionRight(swipeActionRight);
         touchListener.setSwipeMode(swipeMode);
         touchListener.setSwipeClosesAllItemsWhenListMoves(swipeCloseAllItemsWhenMoveList);
+        touchListener.setSwipeMultipleSelectEnabled(swipeMultipleSelectEnabled);
         touchListener.setSwipeOpenOnLongPress(swipeOpenOnLongPress);
         touchListener.setSwipeDrawableChecked(swipeDrawableChecked);
         touchListener.setSwipeDrawableUnchecked(swipeDrawableUnchecked);
-        setOnTouchListener(touchListener);
-        setOnScrollListener(touchListener.makeScrollListener());
+        super.setOnTouchListener(touchListener);
+        super.setOnScrollListener(touchListener.makeScrollListener());
     }
 
     /**
@@ -642,6 +649,7 @@ public class SwipeListView extends PullToLoadListView {
      */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        Log.i(LOG_TAG, "onInterceptTouchEvent");
         int action = MotionEventCompat.getActionMasked(ev);
         final float x = ev.getX();
         final float y = ev.getY();
@@ -679,7 +687,8 @@ public class SwipeListView extends PullToLoadListView {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        // TODO move touchListener.onTouch() calls here
+        //touchListener.onTouch(this, ev);
+        Log.i(LOG_TAG, "onTouchEvent");
         return super.onTouchEvent(ev);
     }
 
