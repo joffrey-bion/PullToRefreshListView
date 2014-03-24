@@ -3,7 +3,6 @@ package com.jbion.android.lib.list.swipe;
 /**
  * Listener to get callback notifications for the SwipeListView
  */
-@SuppressWarnings("ucd")
 public interface SwipeListViewListener {
 
     /**

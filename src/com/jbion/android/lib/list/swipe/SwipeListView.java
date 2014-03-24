@@ -20,7 +20,6 @@ import com.jbion.android.pulltorefresh.R;
 /**
  * ListView subclass that provides the swipe functionality
  */
-@SuppressWarnings("ucd")
 public class SwipeListView extends PullToLoadListView {
 
     /**
@@ -93,14 +92,13 @@ public class SwipeListView extends PullToLoadListView {
      */
     private final static int TOUCH_STATE_SCROLLING_Y = 2;
 
-    private int touchState = TOUCH_STATE_REST;
-
-    private float lastMotionX;
-    private float lastMotionY;
-    private int touchSlop;
-
     int swipeFrontView = 0;
     int swipeBackView = 0;
+
+    private int touchState = TOUCH_STATE_REST;
+    private int touchSlop;
+    private float lastMotionX;
+    private float lastMotionY;
 
     /**
      * Internal listener for common swipe events
@@ -244,25 +242,25 @@ public class SwipeListView extends PullToLoadListView {
      * 
      * @param position
      *            position in list
-     * @return
+     * @return whether the specified position is currently in a swiped state.
      */
     public boolean isChecked(int position) {
         return touchListener.isChecked(position);
     }
 
     /**
-     * Get positions selected
+     * Returns a list of the positions that are currently swiped.
      * 
-     * @return
+     * @return a list of the swiped positions.
      */
     public List<Integer> getPositionsSelected() {
         return touchListener.getPositionsSelected();
     }
 
     /**
-     * Count selected
+     * Returns the number of currently swiped items.
      * 
-     * @return
+     * @return the number of currently swiped items.
      */
     public int getCountSelected() {
         return touchListener.getCountSelected();
@@ -677,6 +675,12 @@ public class SwipeListView extends PullToLoadListView {
         }
 
         return super.onInterceptTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        // TODO move touchListener.onTouch() calls here
+        return super.onTouchEvent(ev);
     }
 
     /**

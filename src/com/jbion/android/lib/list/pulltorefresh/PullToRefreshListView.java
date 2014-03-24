@@ -47,7 +47,6 @@ import com.jbion.android.pulltorefresh.R;
  * finished, for state consistency.
  * </p>
  */
-@SuppressWarnings("ucd")
 public class PullToRefreshListView extends ListView {
 
     private static final String LOG_TAG = PullToRefreshListView.class.getSimpleName();
@@ -498,6 +497,7 @@ public class PullToRefreshListView extends ListView {
             break;
 
         case MotionEvent.ACTION_CANCEL:
+            pushHeaderBack(true);
             pullingOnHeader = false;
             unhideScrollBar();
             Log.v(LOG_TAG, "Header pull canceled");

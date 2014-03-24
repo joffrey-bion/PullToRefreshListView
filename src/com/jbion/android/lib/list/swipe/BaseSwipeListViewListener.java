@@ -1,6 +1,5 @@
 package com.jbion.android.lib.list.swipe;
 
-@SuppressWarnings("ucd")
 public class BaseSwipeListViewListener implements SwipeListViewListener {
     @Override
     public void onOpened(int position, boolean toRight) {

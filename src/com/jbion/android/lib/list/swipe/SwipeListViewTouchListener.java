@@ -32,7 +32,6 @@ import android.widget.AdapterView;
 /**
  * Touch listener impl for the SwipeListView
  */
-@SuppressWarnings("ucd")
 public class SwipeListViewTouchListener implements View.OnTouchListener {
 
     private static final int DISPLACE_CHOICE = 80;

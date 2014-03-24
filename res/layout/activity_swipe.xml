@@ -13,6 +13,7 @@
         swipe:swipeFrontView="@+id/swipe_front_view"
         swipe:swipeMode="left"
         swipe:swipeOffsetLeft="100dp"
-        swipe:swipeOffsetRight="50dp" />
+        swipe:swipeOffsetRight="50dp"
+        swipe:swipeCloseAllItemsWhenMoveList="true" />
 
 </RelativeLayout>
