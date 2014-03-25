@@ -21,6 +21,10 @@
     <declare-styleable name="SwipeListView">
         <attr name="swipeOpenOnLongPress" format="boolean"/>
         <attr name="swipeAnimationTime" format="integer"/>
+        <attr name="swipeOffsetType" format="enum">
+            <enum name="remaining" value="0"/>
+            <enum name="traveled" value="1"/>
+        </attr>
         <attr name="swipeOffsetLeft" format="dimension"/>
         <attr name="swipeOffsetRight" format="dimension"/>
         <attr name="swipeCloseAllItemsWhenMoveList" format="boolean"/>

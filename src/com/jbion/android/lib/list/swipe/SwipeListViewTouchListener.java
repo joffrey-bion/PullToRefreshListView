@@ -33,8 +33,10 @@ import android.widget.AdapterView;
  * Touch listener impl for the SwipeListView
  */
 public class SwipeListViewTouchListener implements View.OnTouchListener {
-    
+
     private static final String LOG_TAG = SwipeListViewTouchListener.class.getSimpleName();
+
+    private static final boolean OFFSET_TRAVELED = true;
 
     private static final int DISPLACE_CHOICE = 80;
 
@@ -55,6 +57,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
     private long configShortAnimationTime;
     private long animationTime;
 
+    private int offsetType = 0;
     private float leftOffset = 0;
     private float rightOffset = 0;
 
@@ -182,6 +185,14 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
         } else {
             this.animationTime = configShortAnimationTime;
         }
+    }
+
+    /**
+     * TODO
+     * @param swipeOffsetType
+     */
+    public void setOffsetType(int swipeOffsetType) {
+        this.offsetType = swipeOffsetType;
     }
 
     /**
@@ -540,6 +551,14 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
                 });
     }
 
+    private int calculateOffset(boolean swapRight) {
+        if (offsetType == SwipeListView.SWIPE_OFFSET_TRAVELED) {
+            return swapRight ? (int) (leftOffset) : (int) (-rightOffset);
+        } else {
+            return swapRight ? (int) (viewWidth - rightOffset) : (int) (-viewWidth + leftOffset);
+        }
+    }
+
     /**
      * Create dismiss animation
      * 
@@ -560,13 +579,11 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
         int moveTo = 0;
         if (opened.get(position)) {
             if (!swap) {
-                moveTo = openedRight.get(position) ? (int) (viewWidth - rightOffset)
-                        : (int) (-viewWidth + leftOffset);
+                moveTo = calculateOffset(openedRight.get(position));
             }
         } else {
             if (swap) {
-                moveTo = swapRight ? (int) (viewWidth - rightOffset)
-                        : (int) (-viewWidth + leftOffset);
+                moveTo = calculateOffset(swapRight);
             }
         }
 
@@ -609,13 +626,11 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
         int moveTo = 0;
         if (opened.get(position)) {
             if (!swap) {
-                moveTo = openedRight.get(position) ? (int) (viewWidth - rightOffset)
-                        : (int) (-viewWidth + leftOffset);
+                moveTo = calculateOffset(openedRight.get(position));
             }
         } else {
             if (swap) {
-                moveTo = swapRight ? (int) (viewWidth - rightOffset)
-                        : (int) (-viewWidth + leftOffset);
+                moveTo = calculateOffset(swapRight);
             }
         }
 
@@ -938,8 +953,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
 
             if (swiping && downPosition != AdapterView.INVALID_POSITION) {
                 if (opened.get(downPosition)) {
-                    deltaX += openedRight.get(downPosition) ? viewWidth - rightOffset : -viewWidth
-                            + leftOffset;
+                    deltaX += calculateOffset(openedRight.get(downPosition));
                 }
                 move(deltaX);
                 Log.d(LOG_TAG, "onTouch MOVE returns true");
@@ -975,8 +989,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
         swipeListView.onMove(downPosition, deltaX);
         float posX = frontView.getX();
         if (opened.get(downPosition)) {
-            posX += openedRight.get(downPosition) ? -viewWidth + rightOffset : viewWidth
-                    - leftOffset;
+            posX += calculateOffset(openedRight.get(downPosition));
         }
         if (posX > 0 && !swipingRight) {
             Log.d("SwipeListView", "change to right");

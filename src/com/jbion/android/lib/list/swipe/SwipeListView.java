@@ -1,5 +1,7 @@
 package com.jbion.android.lib.list.swipe;
 
+import java.util.List;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.DataSetObserver;
@@ -13,9 +15,6 @@ import android.view.ViewConfiguration;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import java.util.List;
-
-import com.jbion.android.lib.list.pulltorefresh.PullToLoadListView;
 import com.jbion.android.pulltorefresh.R;
 
 /**
@@ -69,6 +68,16 @@ public class SwipeListView extends ListView {
      * No action when swiped
      */
     public final static int SWIPE_ACTION_NONE = 3;
+
+    /**
+     * TODO doc Offset type remaining part of the view.
+     */
+    public final static int SWIPE_OFFSET_REMAINING = 0;
+
+    /**
+     * TODO doc Offset type traveled distance.
+     */
+    public final static int SWIPE_OFFSET_TRAVELED = 1;
 
     /**
      * Default ids for front view
@@ -162,6 +171,7 @@ public class SwipeListView extends ListView {
         boolean swipeCloseAllItemsWhenMoveList = true;
         boolean swipeMultipleSelectEnabled = true;
         long swipeAnimationTime = 0;
+        int swipeOffsetType = 0;
         float swipeOffsetLeft = 0;
         float swipeOffsetRight = 0;
         int swipeDrawableChecked = 0;
@@ -178,6 +188,7 @@ public class SwipeListView extends ListView {
                     SWIPE_ACTION_REVEAL);
             swipeActionRight = styled.getInt(R.styleable.SwipeListView_swipeActionRight,
                     SWIPE_ACTION_REVEAL);
+            swipeOffsetType = styled.getInt(R.styleable.SwipeListView_swipeOffsetType, SWIPE_OFFSET_REMAINING);
             swipeOffsetLeft = styled.getDimension(R.styleable.SwipeListView_swipeOffsetLeft, 0);
             swipeOffsetRight = styled.getDimension(R.styleable.SwipeListView_swipeOffsetRight, 0);
             swipeOpenOnLongPress = styled.getBoolean(
@@ -217,6 +228,7 @@ public class SwipeListView extends ListView {
         if (swipeAnimationTime > 0) {
             touchListener.setAnimationTime(swipeAnimationTime);
         }
+        touchListener.setOffsetType(swipeOffsetType);
         touchListener.setRightOffset(swipeOffsetRight);
         touchListener.setLeftOffset(swipeOffsetLeft);
         touchListener.setSwipeActionLeft(swipeActionLeft);
@@ -707,14 +719,12 @@ public class SwipeListView extends ListView {
         boolean xMoved = xDiff > touchSlop;
         boolean yMoved = yDiff > touchSlop;
 
-        if (xMoved) {
-            touchState = TOUCH_STATE_SCROLLING_X;
-            lastMotionX = x;
-            lastMotionY = y;
-        }
-
-        if (yMoved) {
-            touchState = TOUCH_STATE_SCROLLING_Y;
+        if (xMoved || yMoved) {
+            if (xDiff > yDiff) {
+                touchState = TOUCH_STATE_SCROLLING_X;          
+            } else {
+                touchState = TOUCH_STATE_SCROLLING_Y;
+            }
             lastMotionX = x;
             lastMotionY = y;
         }

@@ -548,7 +548,7 @@ public class PullToRefreshListView extends ListView {
                     setSelection(0);
                 }
             }
-            break;
+            return true;
         }
         return super.onTouchEvent(event);
     }

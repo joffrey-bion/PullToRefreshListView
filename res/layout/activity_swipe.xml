@@ -12,8 +12,9 @@
         swipe:swipeBackView="@+id/swipe_back_view"
         swipe:swipeFrontView="@+id/swipe_front_view"
         swipe:swipeMode="left"
-        swipe:swipeOffsetLeft="100dp"
-        swipe:swipeOffsetRight="50dp"
+        swipe:swipeOffsetType="traveled"
+        swipe:swipeOffsetLeft="0dp"
+        swipe:swipeOffsetRight="@dimen/item_height_3"
         swipe:swipeCloseAllItemsWhenMoveList="true"
         swipe:swipeMultipleSelectEnabled="false" />
 
