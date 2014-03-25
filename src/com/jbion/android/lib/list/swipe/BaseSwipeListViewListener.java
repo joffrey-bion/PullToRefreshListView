@@ -39,7 +39,7 @@ public class BaseSwipeListViewListener implements SwipeListViewListener {
 
     @Override
     public int onChangeSwipeMode(int position) {
-        return SwipeListView.SWIPE_MODE_DEFAULT;
+        return SwipeOptions.SWIPE_MODE_DEFAULT;
     }
 
     @Override

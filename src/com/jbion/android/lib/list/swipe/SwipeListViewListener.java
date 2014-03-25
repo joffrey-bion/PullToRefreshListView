@@ -65,8 +65,8 @@ public interface SwipeListViewListener {
     void onDismiss(int[] reverseSortedPositions);
 
     /**
-     * Used when user want to change swipe list mode on some rows. Return SWIPE_MODE_DEFAULT
-     * if you don't want to change swipe list mode
+     * Used when user want to change swipe list swipeMode on some rows. Return SWIPE_MODE_DEFAULT
+     * if you don't want to change swipe list swipeMode
      * @param position position that you want to change
      * @return type
      */

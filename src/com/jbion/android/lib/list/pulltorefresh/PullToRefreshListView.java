@@ -327,7 +327,7 @@ public class PullToRefreshListView extends ListView {
 
     /**
      * Default is {@code false}. When lockScrollWhileRefreshing is set to true, the
-     * list cannot scroll when in 'refreshing' mode. It's 'locked' on refreshing.
+     * list cannot scroll when in 'refreshing' swipeMode. It's 'locked' on refreshing.
      * 
      * @param lockScrollWhileRefreshing
      */

@@ -19,18 +19,9 @@
 <resources>
 
     <declare-styleable name="SwipeListView">
-        <attr name="swipeOpenOnLongPress" format="boolean"/>
-        <attr name="swipeAnimationTime" format="integer"/>
-        <attr name="swipeOffsetType" format="enum">
-            <enum name="remaining" value="0"/>
-            <enum name="traveled" value="1"/>
-        </attr>
-        <attr name="swipeOffsetLeft" format="dimension"/>
-        <attr name="swipeOffsetRight" format="dimension"/>
-        <attr name="swipeCloseAllItemsWhenMoveList" format="boolean"/>
-        <attr name="swipeMultipleSelectEnabled" format="boolean"/>
-        <attr name="swipeFrontView" format="reference"/>
-        <attr name="swipeBackView" format="reference"/>
+        <attr name="itemFrontViewId" format="reference"/>
+        <attr name="itemBackViewId" format="reference"/>
+        
         <attr name="swipeMode" format="enum">
             <enum name="none" value="0"/>
             <enum name="both" value="1"/>
@@ -47,6 +38,19 @@
             <enum name="dismiss" value="1"/>
             <enum name="choice" value="2"/>
         </attr>
+        
+        <attr name="swipeOffsetType" format="enum">
+            <enum name="remaining" value="0"/>
+            <enum name="traveled" value="1"/>
+        </attr>
+        <attr name="swipeOffsetLeft" format="dimension"/>
+        <attr name="swipeOffsetRight" format="dimension"/>
+        
+        <attr name="openOnLongPress" format="boolean"/>
+        <attr name="closeAllItemsOnScroll" format="boolean"/>
+        <attr name="multipleSelectEnabled" format="boolean"/>
+        
+        <attr name="animationTime" format="integer"/>
         <attr name="swipeDrawableChecked" format="reference"/>
         <attr name="swipeDrawableUnchecked" format="reference"/>
     </declare-styleable>
