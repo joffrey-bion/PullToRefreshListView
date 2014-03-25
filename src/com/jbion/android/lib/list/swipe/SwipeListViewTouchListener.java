@@ -34,7 +34,7 @@ import android.widget.AdapterView;
 /**
  * Touch listener impl for the SwipeListView
  */
-public class SwipeListViewTouchListener implements View.OnTouchListener {
+class SwipeListViewTouchListener implements View.OnTouchListener {
 
     private static final String LOG_TAG = SwipeListViewTouchListener.class.getSimpleName();
 
@@ -59,10 +59,10 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
     private Rect rect = new Rect();
 
     // Cached ViewConfiguration and system-wide constant values
-    private int slop;
-    private int minFlingVelocity;
-    private int maxFlingVelocity;
-    private long configShortAnimationTime;
+    private final int slop;
+    private final int minFlingVelocity;
+    private final int maxFlingVelocity;
+    private final long configShortAnimationTime;
 
     // Fixed properties
     private int viewWidth = 1; // 1 and not 0 to prevent dividing by zero
@@ -87,7 +87,6 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
     private boolean swiping;
     private boolean swipingRight;
     private VelocityTracker velocityTracker;
-    private boolean listViewMoving;
 
     private int downPosition;
     private View parentView;
@@ -169,13 +168,6 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
                 listView.onClickBackView(downPosition);
             }
         });
-    }
-
-    /**
-     * @return true if the list is in motion
-     */
-    public boolean isListViewMoving() {
-        return listViewMoving;
     }
 
     /**
@@ -564,12 +556,10 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
                     closeOpenedItems();
                 }
                 if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
-                    listViewMoving = true;
                     setEnabled(false);
                 }
                 if (scrollState != AbsListView.OnScrollListener.SCROLL_STATE_FLING
                         && scrollState != SCROLL_STATE_TOUCH_SCROLL) {
-                    listViewMoving = false;
                     downPosition = AdapterView.INVALID_POSITION;
                     touchState = TOUCH_STATE_REST;
                     new Handler().postDelayed(new Runnable() {
@@ -647,7 +637,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
                 lastMotionY = y;
                 return false;
             case MotionEvent.ACTION_MOVE:
-                checkInMoving(x, y);
+                updateScrollDirection(x, y);
                 return touchState == TOUCH_STATE_SCROLLING_Y;
             case MotionEvent.ACTION_UP:
                 onTouch(listView, ev);
@@ -670,7 +660,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
      * @param y
      *            Position Y
      */
-    private void checkInMoving(float x, float y) {
+    private void updateScrollDirection(float x, float y) {
         final int xDiff = (int) Math.abs(x - lastMotionX);
         final int yDiff = (int) Math.abs(y - lastMotionY);
 

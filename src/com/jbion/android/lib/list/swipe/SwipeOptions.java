@@ -73,6 +73,8 @@ class SwipeOptions {
      */
     public final static String SWIPE_DEFAULT_BACK_VIEW = "swipelist_backview";
 
+    private final int defaultAnimationTime;
+
     int frontViewId = 0;
     int backViewId = 0;
 
@@ -92,7 +94,10 @@ class SwipeOptions {
     int drawableChecked = 0;
     int drawableUnchecked = 0;
 
-    public SwipeOptions() {}
+    public SwipeOptions(Context ctx) {
+        defaultAnimationTime = ctx.getResources()
+                .getInteger(android.R.integer.config_shortAnimTime);
+    }
 
     public void set(Context ctx, TypedArray styled) {
         frontViewId = styled.getResourceId(R.styleable.SwipeListView_itemFrontViewId, 0);
@@ -113,7 +118,8 @@ class SwipeOptions {
         closeAllItemsOnScroll = styled.getBoolean(R.styleable.SwipeListView_closeAllItemsOnScroll,
                 true);
 
-        animationTime = styled.getInteger(R.styleable.SwipeListView_animationTime, 0);
+        animationTime = styled.getInteger(R.styleable.SwipeListView_animationTime,
+                defaultAnimationTime);
         drawableChecked = styled.getResourceId(R.styleable.SwipeListView_swipeDrawableChecked, 0);
         drawableUnchecked = styled.getResourceId(R.styleable.SwipeListView_swipeDrawableUnchecked,
                 0);

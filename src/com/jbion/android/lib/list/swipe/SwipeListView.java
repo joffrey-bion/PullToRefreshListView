@@ -24,13 +24,11 @@ public class SwipeListView extends ListView {
     /**
      * User options container.
      */
-    private final SwipeOptions opts = new SwipeOptions();
-
+    private final SwipeOptions opts = new SwipeOptions(getContext());
     /**
      * Internal listener for common swipe events
      */
     private SwipeListViewListener swipeListViewListener;
-
     /**
      * Internal touch listener
      */
@@ -153,23 +151,6 @@ public class SwipeListView extends ListView {
     }
 
     /**
-     * @see android.widget.ListView#setAdapter(android.widget.ListAdapter)
-     */
-    @Override
-    public void setAdapter(ListAdapter adapter) {
-        super.setAdapter(adapter);
-        touchListener.resetItems();
-        adapter.registerDataSetObserver(new DataSetObserver() {
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                onListChanged();
-                touchListener.resetItems();
-            }
-        });
-    }
-
-    /**
      * Dismiss item
      * 
      * @param position
@@ -232,6 +213,23 @@ public class SwipeListView extends ListView {
     }
 
     /**
+     * @see android.widget.ListView#setAdapter(android.widget.ListAdapter)
+     */
+    @Override
+    public void setAdapter(ListAdapter adapter) {
+        super.setAdapter(adapter);
+        touchListener.resetItems();
+        adapter.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                onListChanged();
+                touchListener.resetItems();
+            }
+        });
+    }
+
+    /**
      * @see android.widget.ListView#onInterceptTouchEvent(android.view.MotionEvent)
      */
     @Override
@@ -246,8 +244,8 @@ public class SwipeListView extends ListView {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        // touchListener.onTouch(this, ev);
         Log.i(LOG_TAG, "onTouchEvent");
+        //touchListener.onTouch(this, ev);
         return super.onTouchEvent(ev);
     }
 
