@@ -34,7 +34,6 @@ public class SwipeListView extends ListView {
      */
     private SwipeListViewTouchListener touchListener;
 
-    
     /**
      * If you create a SwipeListView programmatically you need to specifiy back and
      * front identifier.
@@ -232,6 +231,7 @@ public class SwipeListView extends ListView {
     /**
      * @see android.widget.ListView#onInterceptTouchEvent(android.view.MotionEvent)
      */
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         Log.i(LOG_TAG, "onInterceptTouchEvent");
@@ -239,14 +239,14 @@ public class SwipeListView extends ListView {
         if (isEnabled()) {
             shouldIntercept = touchListener.onInterceptTouchEvent(ev);
         }
-        return shouldIntercept || super.onInterceptTouchEvent(ev);
+        return super.onInterceptTouchEvent(ev) || shouldIntercept;
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         Log.i(LOG_TAG, "onTouchEvent");
-        //touchListener.onTouch(this, ev);
-        return super.onTouchEvent(ev);
+        boolean res = touchListener.onTouch(this, ev);
+        return super.onTouchEvent(ev) || res;
     }
 
     /**
