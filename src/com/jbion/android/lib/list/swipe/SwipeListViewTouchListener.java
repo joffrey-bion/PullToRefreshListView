@@ -84,11 +84,10 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
 
     private class Motion {
         int scrollState = STATE_REST;
+        float downX;
         float lastX;
         float lastY;
 
-        float downX;
-        float downY;
         boolean swiping;
         boolean swipingRight;
         VelocityTracker tracker;
@@ -647,7 +646,6 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
     private void initCurrentMotion(MotionEvent motionEvent) {
         swipeCurrentAction = SwipeOptions.ACTION_NONE;
         currentMotion.downX = motionEvent.getX();
-        currentMotion.downY = motionEvent.getY();
         boolean itemLoaded = initTouchedItem(motionEvent);
         if (itemLoaded) {
             currentMotion.tracker = VelocityTracker.obtain();
