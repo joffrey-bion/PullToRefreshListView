@@ -12,13 +12,14 @@ import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.jbion.android.lib.list.pulltoloadmore.PullToLoadListView;
 import com.jbion.android.lib.list.pulltorefresh.PullToRefreshListView;
 import com.jbion.android.pulltorefresh.R;
 
 /**
  * ListView subclass that provides the swipe functionality
  */
-public class SwipeListView extends PullToRefreshListView {
+public class SwipeListView extends PullToLoadListView {
 
     private static final String LOG_TAG = SwipeListView.class.getSimpleName();
 
@@ -417,35 +418,6 @@ public class SwipeListView extends PullToRefreshListView {
     }
 
     /**
-     * Start open item
-     * 
-     * @param position
-     *            list item
-     * @param action
-     *            current action
-     * @param right
-     *            to right
-     */
-    protected void onStartOpen(int position, int action, boolean right) {
-        if (swipeListViewListener != null && position != ListView.INVALID_POSITION) {
-            swipeListViewListener.onStartOpen(position, action, right);
-        }
-    }
-
-    /**
-     * Start close item
-     * 
-     * @param position
-     *            list item
-     * @param right
-     */
-    protected void onStartClose(int position, boolean right) {
-        if (swipeListViewListener != null && position != ListView.INVALID_POSITION) {
-            swipeListViewListener.onStartClose(position, right);
-        }
-    }
-
-    /**
      * Notifies onClickFrontView
      * 
      * @param position
@@ -550,12 +522,5 @@ public class SwipeListView extends PullToRefreshListView {
         if (swipeListViewListener != null && position != ListView.INVALID_POSITION) {
             swipeListViewListener.onMove(position, x);
         }
-    }
-
-    protected int onChangeSwipeMode(int position) {
-        if (swipeListViewListener != null && position != ListView.INVALID_POSITION) {
-            return swipeListViewListener.onChangeSwipeMode(position);
-        }
-        return SwipeOptions.SWIPE_MODE_DEFAULT;
     }
 }

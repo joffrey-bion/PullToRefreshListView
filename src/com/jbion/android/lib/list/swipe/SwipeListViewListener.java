@@ -32,21 +32,6 @@ public interface SwipeListViewListener {
     void onMove(int position, float x);
 
     /**
-     * Start open item
-     * @param position list item
-     * @param action current action
-     * @param right to right
-     */
-    void onStartOpen(int position, int action, boolean right);
-
-    /**
-     * Start close item
-     * @param position list item
-     * @param right
-     */
-    void onStartClose(int position, boolean right);
-
-    /**
      * Called when user clicks on the front view
      * @param position list item
      */
@@ -63,14 +48,6 @@ public interface SwipeListViewListener {
      * @param reverseSortedPositions Items dismissed
      */
     void onDismiss(int[] reverseSortedPositions);
-
-    /**
-     * Used when user want to change swipe list swipeMode on some rows. Return SWIPE_MODE_DEFAULT
-     * if you don't want to change swipe list swipeMode
-     * @param position position that you want to change
-     * @return type
-     */
-    int onChangeSwipeMode(int position);
 
     /**
      * Called when user choice item

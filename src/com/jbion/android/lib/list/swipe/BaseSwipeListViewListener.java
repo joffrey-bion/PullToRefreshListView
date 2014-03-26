@@ -18,14 +18,6 @@ public class BaseSwipeListViewListener implements SwipeListViewListener {
     }
 
     @Override
-    public void onStartOpen(int position, int action, boolean right) {
-    }
-
-    @Override
-    public void onStartClose(int position, boolean right) {
-    }
-
-    @Override
     public void onClickFrontView(int position) {
     }
 
@@ -35,11 +27,6 @@ public class BaseSwipeListViewListener implements SwipeListViewListener {
 
     @Override
     public void onDismiss(int[] reverseSortedPositions) {
-    }
-
-    @Override
-    public int onChangeSwipeMode(int position) {
-        return SwipeOptions.SWIPE_MODE_DEFAULT;
     }
 
     @Override
