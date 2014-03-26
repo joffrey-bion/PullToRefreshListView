@@ -1,4 +1,4 @@
-package com.jbion.android.lib.list.pulltorefresh;
+package com.jbion.android.lib.list.pulltoloadmore;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -7,22 +7,10 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 
+import com.jbion.android.lib.list.pulltorefresh.PullToRefreshListView;
 import com.jbion.android.pulltorefresh.R;
 
 public class PullToLoadListView extends PullToRefreshListView implements OnScrollListener {
-
-	/**
-	 * Interface definition for a callback to be invoked when this list reaches the
-	 * last item.
-	 */
-	public interface OnPullToLoadMoreListener {
-		/**
-		 * Called when the list reaches the last item (the last item is visible to
-		 * the user) A call to {@link PullToLoadListView #onLoadingComplete()} is
-		 * expected to indicate that the loading has completed.
-		 */
-		public void onPullToLoadMore();
-	}
 
 	/** Whether the pull-up feature is enabled */
 	private boolean loadMoreEnabled = true;

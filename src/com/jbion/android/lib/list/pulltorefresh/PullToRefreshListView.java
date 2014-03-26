@@ -68,18 +68,6 @@ public class PullToRefreshListView extends ListView {
     private static final int FIRST_ITEM_POSITION = 1;
 
     /**
-     * Interface to implement when you want to get notified of 'pull to refresh'
-     * events. Call setOnRefreshListener(..) to activate an OnPullToRefreshListener.
-     */
-    public interface OnPullToRefreshListener {
-
-        /**
-         * Method called when a refresh is requested.
-         */
-        public void onPullToRefresh();
-    }
-
-    /**
      * Possible internal states for this {@link PullToRefreshListView}.
      */
     private static enum State {
@@ -95,8 +83,9 @@ public class PullToRefreshListView extends ListView {
     /** Whether the pull-to-refresh functionality is enabled. */
     protected boolean ptrEnabled = true;
 
-    private OnItemClickListener onItemClickListener;
-    private OnItemLongClickListener onItemLongClickListener;
+    private OnItemClickListener userOnItemClickListener;
+    private OnItemLongClickListener userOnItemLongClickListener;
+
     private OnPullToRefreshListener onRefreshListener;
 
     private String pullToRefreshText = "Pull to refresh";
@@ -250,12 +239,12 @@ public class PullToRefreshListView extends ListView {
 
     @Override
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
+        this.userOnItemClickListener = onItemClickListener;
     }
 
     @Override
     public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
-        this.onItemLongClickListener = onItemLongClickListener;
+        this.userOnItemLongClickListener = onItemLongClickListener;
     }
 
     @Override
@@ -327,7 +316,8 @@ public class PullToRefreshListView extends ListView {
 
     /**
      * Default is {@code false}. When lockScrollWhileRefreshing is set to true, the
-     * list cannot scroll when in 'refreshing' swipeMode. It's 'locked' on refreshing.
+     * list cannot scroll when in 'refreshing' swipeMode. It's 'locked' on
+     * refreshing.
      * 
      * @param lockScrollWhileRefreshing
      */
@@ -548,7 +538,7 @@ public class PullToRefreshListView extends ListView {
                     setSelection(0);
                 }
             }
-            return true;
+            return super.onTouchEvent(event) || true;
         }
         return super.onTouchEvent(event);
     }
@@ -725,8 +715,8 @@ public class PullToRefreshListView extends ListView {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
             hasResetHeader = false;
-            if (onItemClickListener != null) {
-                onItemClickListener.onItemClick(adapterView, view, position - 1, id);
+            if (userOnItemClickListener != null) {
+                userOnItemClickListener.onItemClick(adapterView, view, position - 1, id);
             }
         }
     }
@@ -739,8 +729,9 @@ public class PullToRefreshListView extends ListView {
         @Override
         public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
             hasResetHeader = false;
-            if (onItemLongClickListener != null) {
-                return onItemLongClickListener.onItemLongClick(adapterView, view, position - 1, id);
+            if (userOnItemLongClickListener != null) {
+                return userOnItemLongClickListener.onItemLongClick(adapterView, view, position - 1,
+                        id);
             }
             return false;
         }

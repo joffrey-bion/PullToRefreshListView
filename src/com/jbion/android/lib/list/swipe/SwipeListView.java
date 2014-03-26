@@ -12,12 +12,13 @@ import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.jbion.android.lib.list.pulltorefresh.PullToRefreshListView;
 import com.jbion.android.pulltorefresh.R;
 
 /**
  * ListView subclass that provides the swipe functionality
  */
-public class SwipeListView extends ListView {
+public class SwipeListView extends PullToRefreshListView {
 
     private static final String LOG_TAG = SwipeListView.class.getSimpleName();
 
@@ -33,6 +34,9 @@ public class SwipeListView extends ListView {
      * Internal touch listener
      */
     private SwipeListViewTouchListener touchListener;
+    
+    // TODO notify this listener in our private scroll listener
+    private OnScrollListener userScrollListener;
 
     /**
      * If you create a SwipeListView programmatically you need to specifiy back and
@@ -86,9 +90,42 @@ public class SwipeListView extends ListView {
         }
 
         touchListener = new SwipeListViewTouchListener(this, opts);
-        super.setOnTouchListener(touchListener);
+        //super.setOnTouchListener(touchListener);
         super.setOnScrollListener(touchListener.makeScrollListener());
     }
+    
+    /*
+     * BUSINESS LOGIC
+     */
+    
+    /**
+     * @see android.widget.ListView#onInterceptTouchEvent(android.view.MotionEvent)
+     */
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        boolean customIntercept = false;
+        if (isEnabled()) {
+            customIntercept = touchListener.shouldIntercept(ev);
+        }
+        boolean superIntercept = super.onInterceptTouchEvent(ev);
+        // execute super in any case (hence the order)
+        if (superIntercept) {
+            Log.i(LOG_TAG, "SUPER INTERCEPTS TOUCH EVENTS (scroll)");
+        }
+        return superIntercept || customIntercept;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        Log.i(LOG_TAG, "onTouchEvent");
+        boolean res = touchListener.onTouch(this, ev);
+        // execute super in any case (hence the order)
+        return super.onTouchEvent(ev) || res;
+    }
+    
+    /*
+     * USER METHODS
+     */
 
     /**
      * Sets the Listener
@@ -98,19 +135,6 @@ public class SwipeListView extends ListView {
      */
     public void setSwipeListViewListener(SwipeListViewListener swipeListViewListener) {
         this.swipeListViewListener = swipeListViewListener;
-    }
-
-    /**
-     * Recycle cell. This method should be called from getView in Adapter when using
-     * ACTION_CHOICE
-     * 
-     * @param convertView
-     *            parent view
-     * @param position
-     *            position in list
-     */
-    public void recycle(View convertView, int position) {
-        touchListener.reloadChoiceStateInView(convertView.findViewById(opts.frontViewId), position);
     }
 
     /**
@@ -140,6 +164,26 @@ public class SwipeListView extends ListView {
      */
     public int getCountSelected() {
         return touchListener.getCountSelected();
+    }
+
+    /**
+     * Close all opened items
+     */
+    public void closeOpenedItems() {
+        touchListener.closeOpenedItems();
+    }
+
+    /**
+     * Recycle cell. This method should be called from getView in Adapter when using
+     * ACTION_CHOICE
+     * 
+     * @param convertView
+     *            parent view
+     * @param position
+     *            position in list
+     */
+    public void recycle(View convertView, int position) {
+        touchListener.reloadChoiceStateInView(convertView.findViewById(opts.frontViewId), position);
     }
 
     /**
@@ -198,7 +242,7 @@ public class SwipeListView extends ListView {
      *            Position that you want open
      */
     public void openAnimate(int position) {
-        touchListener.openAnimate(position);
+        touchListener.open(position);
     }
 
     /**
@@ -208,8 +252,12 @@ public class SwipeListView extends ListView {
      *            Position that you want open
      */
     public void closeAnimate(int position) {
-        touchListener.closeAnimate(position);
+        touchListener.close(position);
     }
+    
+    /*
+     * SUPER SETTERS INTERCEPTION
+     */
 
     /**
      * @see android.widget.ListView#setAdapter(android.widget.ListAdapter)
@@ -227,33 +275,10 @@ public class SwipeListView extends ListView {
             }
         });
     }
-
-    /**
-     * @see android.widget.ListView#onInterceptTouchEvent(android.view.MotionEvent)
-     */
-
+    
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        Log.i(LOG_TAG, "onInterceptTouchEvent");
-        boolean shouldIntercept = false;
-        if (isEnabled()) {
-            shouldIntercept = touchListener.onInterceptTouchEvent(ev);
-        }
-        return super.onInterceptTouchEvent(ev) || shouldIntercept;
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        Log.i(LOG_TAG, "onTouchEvent");
-        boolean res = touchListener.onTouch(this, ev);
-        return super.onTouchEvent(ev) || res;
-    }
-
-    /**
-     * Close all opened items
-     */
-    public void closeOpenedItems() {
-        touchListener.closeOpenedItems();
+    public void setOnScrollListener(OnScrollListener listener) {
+        userScrollListener = listener;
     }
 
     /*
@@ -501,24 +526,6 @@ public class SwipeListView extends ListView {
     protected void onChoiceEnded() {
         if (swipeListViewListener != null) {
             swipeListViewListener.onChoiceEnded();
-        }
-    }
-
-    /**
-     * User is in first item of list
-     */
-    protected void onFirstListItem() {
-        if (swipeListViewListener != null) {
-            swipeListViewListener.onFirstListItem();
-        }
-    }
-
-    /**
-     * User is in last item of list
-     */
-    protected void onLastListItem() {
-        if (swipeListViewListener != null) {
-            swipeListViewListener.onLastListItem();
         }
     }
 

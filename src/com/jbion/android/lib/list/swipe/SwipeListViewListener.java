@@ -89,14 +89,4 @@ public interface SwipeListViewListener {
      */
     void onChoiceEnded();
 
-    /**
-     * User is in first item of list
-     */
-    void onFirstListItem();
-
-    /**
-     * User is in last item of list
-     */
-    void onLastListItem();
-
 }

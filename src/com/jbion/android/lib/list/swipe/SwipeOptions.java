@@ -97,6 +97,7 @@ class SwipeOptions {
     public SwipeOptions(Context ctx) {
         defaultAnimationTime = ctx.getResources()
                 .getInteger(android.R.integer.config_shortAnimTime);
+        animationTime = defaultAnimationTime;
     }
 
     public void set(Context ctx, TypedArray styled) {

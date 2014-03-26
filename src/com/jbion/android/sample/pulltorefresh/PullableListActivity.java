@@ -16,10 +16,10 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Toast;
 
-import com.jbion.android.lib.list.pulltorefresh.PullToLoadListView;
+import com.jbion.android.lib.list.pulltoloadmore.OnPullToLoadMoreListener;
+import com.jbion.android.lib.list.pulltoloadmore.PullToLoadListView;
+import com.jbion.android.lib.list.pulltorefresh.OnPullToRefreshListener;
 import com.jbion.android.lib.list.pulltorefresh.PullToRefreshListView;
-import com.jbion.android.lib.list.pulltorefresh.PullToLoadListView.OnPullToLoadMoreListener;
-import com.jbion.android.lib.list.pulltorefresh.PullToRefreshListView.OnPullToRefreshListener;
 import com.jbion.android.pulltorefresh.R;
 
 @SuppressWarnings("ucd")

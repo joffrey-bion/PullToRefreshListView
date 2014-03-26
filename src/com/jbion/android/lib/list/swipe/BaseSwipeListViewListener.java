@@ -53,12 +53,4 @@ public class BaseSwipeListViewListener implements SwipeListViewListener {
     @Override
     public void onChoiceEnded() {
     }
-
-    @Override
-    public void onFirstListItem() {
-    }
-
-    @Override
-    public void onLastListItem() {
-    }
 }
