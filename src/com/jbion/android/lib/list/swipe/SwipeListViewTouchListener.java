@@ -455,9 +455,9 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
      * 
      * @param view
      *            affected view
-     * @param swap
+     * @param changeState
      *            If will change state. If "false" returns to the original position
-     * @param swapRight
+     * @param toRight
      *            If swap is true, this parameter tells if movement is toward right
      *            or left
      * @param position
@@ -471,7 +471,7 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
         if (!opts.multipleSelectEnabled && changeState && !isOpen) {
             closeOpenedItems();
         }
-        
+
         int moveTo = changeState ^ isOpen ? calculateOpenOffset(toRight) : 0;
 
         view.animate().translationX(moveTo).setDuration(opts.animationTime)
@@ -483,7 +483,7 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
                             opened.set(position, true);
                             listView.onOpened(position, toRight);
                             openedRight.set(position, toRight);
-                        } else if (changeState && isOpen){
+                        } else if (changeState && isOpen) {
                             opened.set(position, false);
                             listView.onClosed(position, !toRight);
                         }
@@ -590,11 +590,15 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int scrollState) {
                 setEnabled(scrollState != AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL);
+                Log.d(LOG_TAG, "Scroll scroll");
                 if (scrollState == SCROLL_STATE_TOUCH_SCROLL || scrollState == SCROLL_STATE_FLING) {
+                    Log.d(LOG_TAG, "Scroll scroll");
                     if (opts.closeAllItemsOnScroll) {
+                        Log.d(LOG_TAG, "Scroll: close everything!");
                         closeOpenedItems();
                     }
                 } else {
+                    Log.d(LOG_TAG, "No scroll: reset");
                     movingItem.position = AdapterView.INVALID_POSITION;
                     currentMotion.scrollState = STATE_REST;
                 }
@@ -602,7 +606,11 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
-                    int totalItemCount) {}
+                    int totalItemCount) {
+                /*
+                Log.d(LOG_TAG, "first=" + firstVisibleItem + " last="
+                        + (firstVisibleItem + visibleItemCount - 1));*/
+            }
         };
     }
 
@@ -897,14 +905,6 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
         currentActionLeft = opts.swipeActionLeft;
     }
 
-    private void adjustBackViewVisibility() {
-        if (swipeCurrentAction == SwipeOptions.ACTION_CHOICE) {
-            movingItem.backView.setVisibility(View.GONE);
-        } else {
-            movingItem.backView.setVisibility(View.VISIBLE);
-        }
-    }
-
     /**
      * Moves the view
      * 
@@ -922,12 +922,16 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
             Log.d("SwipeListView", "change to right");
             currentMotion.swipingRight = true;
             swipeCurrentAction = currentActionRight;
-            adjustBackViewVisibility();
+            movingItem.backView
+                    .setVisibility(swipeCurrentAction == SwipeOptions.ACTION_CHOICE ? View.GONE
+                            : View.VISIBLE);
         } else if (posX < 0 && currentMotion.swipingRight) {
             Log.d("SwipeListView", "change to left");
             currentMotion.swipingRight = false;
             swipeCurrentAction = currentActionLeft;
-            adjustBackViewVisibility();
+            movingItem.backView
+                    .setVisibility(swipeCurrentAction == SwipeOptions.ACTION_CHOICE ? View.GONE
+                            : View.VISIBLE);
         }
         if (swipeCurrentAction == SwipeOptions.ACTION_DISMISS) {
             movingItem.view.setTranslationX(deltaX);
