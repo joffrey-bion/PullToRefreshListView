@@ -647,12 +647,12 @@ public class PullToRefreshListView extends ListView {
     /**
      * Called when the header is pulled or not pulled anymore.
      * 
-     * @param pullingOnHeader
+     * @param userPullingOnHeader
      *            whether the user is pulling on the header now.
      * @param pullState
      *            the current {@link State} of the header
      */
-    protected void onHeaderPullStateChanged(boolean pullingOnHeader, State pullState) {}
+    protected void onHeaderPullStateChanged(boolean userPullingOnHeader, State pullState) {}
 
     /**
      * Listens to global list animations. Hides the scrollbar during the animations.

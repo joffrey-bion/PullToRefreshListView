@@ -6,7 +6,6 @@ import java.util.List;
 import android.app.ListActivity;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,12 +50,7 @@ public class SwipeActivity extends ListActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View v = super.getView(position, convertView, parent);
-            if (v == convertView) {
-                SwipeListView list = (SwipeListView) getListView();
-                list.recycle(convertView, position);
-                Log.d("getView",
-                        "recycling view " + position + " checked==" + list.isChecked(position));
-            }
+            ((SwipeListView) getListView()).initSwipeState(v, position);
             return v;
         }
     }

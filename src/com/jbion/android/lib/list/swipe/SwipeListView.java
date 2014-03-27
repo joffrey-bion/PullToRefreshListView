@@ -20,10 +20,9 @@ import com.jbion.android.pulltorefresh.R;
  * {@link #setSwipeListViewListener(SwipeListViewListener)} to get notified of some
  * events, or use the getters to have information about the selected items.
  * <p>
- * <b>Important note:</b> You should call {@link #recycle(View, int)} from your
- * adapter's {@link ListAdapter#getView(int, View, android.view.ViewGroup)} method,
- * to inform this list that you're recycling a view. If you don't, this list could
- * bahave in some weird fashion.
+ * <b>Important note:</b> You should call {@link #initSwipeState(View, int)} from
+ * your adapter's {@link ListAdapter#getView(int, View, android.view.ViewGroup)}
+ * method, to initialize its swipe state properly.
  * </p>
  */
 public class SwipeListView extends PullToLoadListView {
@@ -99,7 +98,7 @@ public class SwipeListView extends PullToLoadListView {
 
         touchListener = new SwipeListViewTouchListener(this, opts);
         // super.setOnTouchListener(touchListener);
-        super.setOnScrollListener(touchListener.makeScrollListener());
+        // super.setOnScrollListener(touchListener.makeScrollListener());
     }
 
     /*
@@ -133,7 +132,7 @@ public class SwipeListView extends PullToLoadListView {
     @Override
     protected void onHeaderPullStateChanged(boolean pullingOnHeader, State pullState) {
         if (touchListener != null) {
-            touchListener.setEnabled(!pullingOnHeader);
+            touchListener.setSwipeEnabled(!pullingOnHeader);
         }
     }
 
@@ -152,18 +151,18 @@ public class SwipeListView extends PullToLoadListView {
     }
 
     /**
-     * Readjusts the state of the recycled view to match the item it now represents.
-     * This method should be <b>called from getView</b> in Adapter when reusing a
-     * {@code convertView}.
+     * Adjusts the swipe state of the specified view to match the item it represents.
+     * This method <b>should be called from getView</b> in the Adapter when
+     * initializing a view (either a new or a recycled one).
      * 
-     * @param convertView
-     *            parent view
+     * @param itemView
+     *            The item's view to be initialized
      * @param position
-     *            position in list
+     *            The position of the item in the adapter
      */
-    public void recycle(View convertView, int position) {
+    public void initSwipeState(View itemView, int position) {
         // the position argument for getView does not take headers into account
-        touchListener.reloadViewState(convertView, position + getHeaderViewsCount());
+        touchListener.initViewSwipeState(itemView, position + getHeaderViewsCount());
     }
 
     /**
@@ -183,7 +182,7 @@ public class SwipeListView extends PullToLoadListView {
      * @return a list of the swiped positions.
      */
     public List<Integer> getSelectedPositions() {
-        return touchListener.getSelectedPositions();
+        return touchListener.getCheckedPositions();
     }
 
     /**
@@ -192,7 +191,7 @@ public class SwipeListView extends PullToLoadListView {
      * @return the number of currently swiped items.
      */
     public int getCountSelected() {
-        return touchListener.getCountSelected();
+        return touchListener.getCountChecked();
     }
 
     /**
@@ -206,7 +205,7 @@ public class SwipeListView extends PullToLoadListView {
      * Unselected choice state in item
      */
     public void unselectedChoiceStates() {
-        touchListener.unselectedChoiceStates();
+        touchListener.uncheckAllItems();
     }
 
     /**
@@ -231,7 +230,7 @@ public class SwipeListView extends PullToLoadListView {
      * Dismiss items selected
      */
     public void dismissSelected() {
-        List<Integer> list = touchListener.getSelectedPositions();
+        List<Integer> list = touchListener.getCheckedPositions();
         int[] dismissPositions = new int[list.size()];
         int height = 0;
         for (int i = 0; i < list.size(); i++) {
@@ -300,6 +299,12 @@ public class SwipeListView extends PullToLoadListView {
     /*
      * OPTIONS SETTERS
      */
+
+    public void setSwipeEnabled(boolean enabled) {
+        if (touchListener != null) {
+            touchListener.setSwipeEnabled(enabled);
+        }
+    }
 
     /**
      * Sets the swipe swipeMode
