@@ -479,7 +479,7 @@ public class PullToRefreshListView extends ListView {
                 default:
                     break;
                 }
-                // not pulling anymore
+                // not pullingX anymore
                 pullingOnHeader = false;
                 unhideScrollBar();
                 Log.v(LOG_TAG, "Header released");
@@ -504,7 +504,7 @@ public class PullToRefreshListView extends ListView {
                 hideScrollBarTemporarily();
                 // remember starting position for pull distance
                 pullOrigin = event.getY();
-                Log.v(LOG_TAG, "Start pulling on header");
+                Log.v(LOG_TAG, "Start pullingX on header");
             }
 
             if (isPullingOnHeader()) {

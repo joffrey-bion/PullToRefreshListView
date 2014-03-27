@@ -13,11 +13,18 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.jbion.android.lib.list.pulltoloadmore.PullToLoadListView;
-import com.jbion.android.lib.list.pulltorefresh.PullToRefreshListView;
 import com.jbion.android.pulltorefresh.R;
 
 /**
- * ListView subclass that provides the swipe functionality
+ * ListView subclass that provides the swipe functionality. To use it, simply use
+ * {@link #setSwipeListViewListener(SwipeListViewListener)} to get notified of some
+ * events, or use the getters to have information about the selected items.
+ * <p>
+ * <b>Important note:</b> You should call {@link #recycle(View, int)} from your
+ * adapter's {@link ListAdapter#getView(int, View, android.view.ViewGroup)} method,
+ * to inform this list that you're recycling a view. If you don't, this list could
+ * bahave in some weird fashion.
+ * </p>
  */
 public class SwipeListView extends PullToLoadListView {
 
@@ -35,7 +42,7 @@ public class SwipeListView extends PullToLoadListView {
      * Internal touch listener
      */
     private SwipeListViewTouchListener touchListener;
-    
+
     // TODO notify this listener in our private scroll listener
     private OnScrollListener userScrollListener;
 
@@ -91,14 +98,14 @@ public class SwipeListView extends PullToLoadListView {
         }
 
         touchListener = new SwipeListViewTouchListener(this, opts);
-        //super.setOnTouchListener(touchListener);
+        // super.setOnTouchListener(touchListener);
         super.setOnScrollListener(touchListener.makeScrollListener());
     }
-    
+
     /*
      * BUSINESS LOGIC
      */
-    
+
     /**
      * @see android.widget.ListView#onInterceptTouchEvent(android.view.MotionEvent)
      */
@@ -118,12 +125,11 @@ public class SwipeListView extends PullToLoadListView {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        Log.i(LOG_TAG, "onTouchEvent");
         boolean res = touchListener.onTouch(this, ev);
         // execute super in any case (hence the order)
         return super.onTouchEvent(ev) || res;
     }
-    
+
     /*
      * USER METHODS
      */
@@ -136,6 +142,21 @@ public class SwipeListView extends PullToLoadListView {
      */
     public void setSwipeListViewListener(SwipeListViewListener swipeListViewListener) {
         this.swipeListViewListener = swipeListViewListener;
+    }
+
+    /**
+     * Readjusts the state of the recycled view to match the item it now represents.
+     * This method should be <b>called from getView</b> in Adapter when reusing a
+     * {@code convertView}.
+     * 
+     * @param convertView
+     *            parent view
+     * @param position
+     *            position in list
+     */
+    public void recycle(View convertView, int position) {
+        // the position argument for getView does not take headers into account
+        touchListener.reloadViewState(convertView, position + getHeaderViewsCount());
     }
 
     /**
@@ -171,20 +192,7 @@ public class SwipeListView extends PullToLoadListView {
      * Close all opened items
      */
     public void closeOpenedItems() {
-        touchListener.closeOpenedItems();
-    }
-
-    /**
-     * Recycle cell. This method should be called from getView in Adapter when using
-     * ACTION_CHOICE
-     * 
-     * @param convertView
-     *            parent view
-     * @param position
-     *            position in list
-     */
-    public void recycle(View convertView, int position) {
-        touchListener.reloadChoiceStateInView(convertView.findViewById(opts.frontViewId), position);
+        touchListener.unswipeAllItems();
     }
 
     /**
@@ -242,8 +250,8 @@ public class SwipeListView extends PullToLoadListView {
      * @param position
      *            Position that you want open
      */
-    public void openAnimate(int position) {
-        touchListener.open(position);
+    public void swipe(int position) {
+        touchListener.swipe(position);
     }
 
     /**
@@ -252,10 +260,10 @@ public class SwipeListView extends PullToLoadListView {
      * @param position
      *            Position that you want open
      */
-    public void closeAnimate(int position) {
-        touchListener.close(position);
+    public void unswipe(int position) {
+        touchListener.unswipe(position);
     }
-    
+
     /*
      * SUPER SETTERS INTERCEPTION
      */
@@ -276,7 +284,7 @@ public class SwipeListView extends PullToLoadListView {
             }
         });
     }
-    
+
     @Override
     public void setOnScrollListener(OnScrollListener listener) {
         userScrollListener = listener;
@@ -449,7 +457,7 @@ public class SwipeListView extends PullToLoadListView {
      * @param toRight
      *            If should be opened toward the right
      */
-    protected void onOpened(int position, boolean toRight) {
+    protected void onSwiped(int position, boolean toRight) {
         if (swipeListViewListener != null && position != ListView.INVALID_POSITION) {
             swipeListViewListener.onOpened(position, toRight);
         }
@@ -463,7 +471,7 @@ public class SwipeListView extends PullToLoadListView {
      * @param fromRight
      *            If open from right
      */
-    protected void onClosed(int position, boolean fromRight) {
+    protected void onUnswiped(int position, boolean fromRight) {
         if (swipeListViewListener != null && position != ListView.INVALID_POSITION) {
             swipeListViewListener.onClosed(position, fromRight);
         }
