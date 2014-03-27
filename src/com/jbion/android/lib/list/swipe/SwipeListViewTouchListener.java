@@ -3,7 +3,6 @@ package com.jbion.android.lib.list.swipe;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
@@ -128,12 +127,12 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
     }
 
     /**
-     * Check is pullingX is enabled
+     * Check if swipe is enabled
      * 
      * @return {@code true} if swipe is enabled
      */
     protected boolean isSwipeEnabled() {
-        return opts.swipeMode != SwipeOptions.SWIPE_MODE_NONE;
+        return !paused && opts.swipeMode != SwipeOptions.SWIPE_MODE_NONE;
     }
 
     /**
@@ -221,7 +220,6 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
      * @param position
      *            position in list
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     protected void reloadViewState(View convertView, int position) {
         View frontView = convertView.findViewById(opts.frontViewId);
         if (isChecked(position)) {
@@ -233,10 +231,10 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
         }
         if (swiped.get(position)) {
             Log.d(LOG_TAG, "resetting View " + position + " to open position");
-            frontView.setTranslationX(calculateSwipedOffset(swipedToRight.get(position)));
+            setTranslationX(frontView, calculateSwipedOffset(swipedToRight.get(position)));
         } else {
             Log.d(LOG_TAG, "resetting View " + position + " to closed position");
-            frontView.setTranslationX(0);
+            setTranslationX(frontView, 0);
         }
     }
 
@@ -400,16 +398,14 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
      * @param position
      *            list position
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     private void generateChoiceAnimate(final View view, final int position) {
-        view.animate().translationX(0).setDuration(opts.animationTime)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        currentMotion.scrollState = STATE_REST;
-                        releaseMovingItem();
-                    }
-                });
+        animate(view, 0, opts.animationTime, new Runnable() {
+            @Override
+            public void run() {
+                currentMotion.scrollState = STATE_REST;
+                releaseMovingItem();
+            }
+        });
     }
 
     /**
@@ -426,7 +422,6 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
      * @param position
      *            Position of list
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     private void generateDismissAnimate(final View view, final boolean swap,
             final boolean swapRight, final int position) {
         int moveTo = 0;
@@ -446,17 +441,16 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
             alpha = 0;
         }
 
-        view.animate().translationX(moveTo).alpha(alpha).setDuration(opts.animationTime)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        if (swap) {
-                            unswipeAllItems();
-                            performDismiss(view, position, true);
-                        }
-                        releaseMovingItem();
-                    }
-                });
+        animate(view, moveTo, alpha, opts.animationTime, new Runnable() {
+            @Override
+            public void run() {
+                if (swap) {
+                    unswipeAllItems();
+                    performDismiss(view, position, true);
+                }
+                releaseMovingItem();
+            }
+        });
 
     }
 
@@ -473,7 +467,6 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
      * @param position
      *            list position
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     private void generateRevealAnimate2(final View view, final boolean changeState,
             final boolean toRight, final int position) {
         final boolean isOpen = swiped.get(position);
@@ -484,71 +477,21 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
 
         int moveTo = changeState ^ isOpen ? calculateSwipedOffset(toRight) : 0;
 
-        view.animate().translationX(moveTo).setDuration(opts.animationTime)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        currentMotion.scrollState = STATE_REST;
-                        if (changeState && !isOpen) {
-                            swiped.set(position, true);
-                            swipedToRight.set(position, toRight);
-                            listView.onSwiped(position, toRight);
-                        } else if (changeState && isOpen) {
-                            swiped.set(position, false);
-                            listView.onUnswiped(position, !toRight);
-                        }
-                        releaseMovingItem();
-                    }
-                });
-    }
-
-    /**
-     * Create reveal animation
-     * 
-     * @param view
-     *            affected view
-     * @param swap
-     *            If will change state. If "false" returns to the original position
-     * @param swapRight
-     *            If swap is true, this parameter tells if movement is toward right
-     *            or left
-     * @param position
-     *            list position
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
-    private void generateRevealAnimateOld(final View view, final boolean swap,
-            final boolean swapRight, final int position) {
-        int moveTo = 0;
-        boolean isOpen = swiped.get(position);
-
-        if (!opts.multipleSelectEnabled && !isOpen) {
-            unswipeAllItems();
-        }
-
-        if (isOpen && !swap) {
-            moveTo = calculateSwipedOffset(swipedToRight.get(position));
-        } else if (!isOpen && swap) {
-            moveTo = calculateSwipedOffset(swapRight);
-        }
-
-        view.animate().translationX(moveTo).setDuration(opts.animationTime)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        currentMotion.scrollState = STATE_REST;
-                        if (swap) {
-                            boolean closed = !swiped.get(position);
-                            swiped.set(position, closed);
-                            if (closed) {
-                                listView.onSwiped(position, swapRight);
-                                swipedToRight.set(position, swapRight);
-                            } else {
-                                listView.onUnswiped(position, swipedToRight.get(position));
-                            }
-                        }
-                        releaseMovingItem();
-                    }
-                });
+        animate(view, moveTo, opts.animationTime, new Runnable() {
+            @Override
+            public void run() {
+                currentMotion.scrollState = STATE_REST;
+                if (changeState && !isOpen) {
+                    swiped.set(position, true);
+                    swipedToRight.set(position, toRight);
+                    listView.onSwiped(position, toRight);
+                } else if (changeState && isOpen) {
+                    swiped.set(position, false);
+                    listView.onUnswiped(position, !toRight);
+                }
+                releaseMovingItem();
+            }
+        });
     }
 
     /**
@@ -770,23 +713,17 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
         if (isSwipeEnabled()) {
             switch (action) {
             case MotionEvent.ACTION_DOWN:
-                currentMotion.scrollState = STATE_REST;
                 initCurrentMotion(ev);
-                Log.d(LOG_TAG, "Intercept DOWN false");
+                //$FALL-THROUGH$
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                currentMotion.scrollState = STATE_REST;
                 return false;
             case MotionEvent.ACTION_MOVE:
                 updateScrollDirection(x, y);
                 Log.d(LOG_TAG, "Intercept MOVE " + (currentMotion.scrollState == STATE_SCROLLING_X)
                         + " (state=" + currentMotion.scrollState + ")");
                 return currentMotion.scrollState == STATE_SCROLLING_X;
-            case MotionEvent.ACTION_UP:
-                Log.d(LOG_TAG, "Intercept UP false");
-                currentMotion.scrollState = STATE_REST;
-                return false;
-            case MotionEvent.ACTION_CANCEL:
-                Log.d(LOG_TAG, "Intercept CANCEL false");
-                currentMotion.scrollState = STATE_REST;
-                return false;
             default:
                 break;
             }
@@ -836,7 +773,7 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
             if (!okToMoveThere) {
                 Log.w(LOG_TAG, "Trying to pull item " + movingItem.position + " the wrong way");
                 currentMotion.downX = ev.getX(); // to restart pulling from here
-                return false;
+                deltaX = 0;
             }
 
             // update pulling state if needed
@@ -962,25 +899,24 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
      * @param targetX
      *            delta
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void updateFrontViewXPosition(float targetX) {
-        float posX = movingItem.frontView.getX();
-        if (swiped.get(movingItem.position)) {
-            posX -= calculateSwipedOffset(swipedToRight.get(movingItem.position));
-        }
         if (swipeCurrentAction == SwipeOptions.ACTION_DISMISS) {
-            movingItem.view.setTranslationX(targetX);
-            movingItem.view.setAlpha(Math.max(0f,
-                    Math.min(1f, 1f - 2f * Math.abs(targetX) / viewWidth)));
+            setTranslationX(movingItem.view, targetX);
+            setAlpha(movingItem.view,
+                    Math.max(0f, Math.min(1f, 1f - 2f * Math.abs(targetX) / viewWidth)));
         } else if (swipeCurrentAction == SwipeOptions.ACTION_CHOICE) {
+            float posX = getX(movingItem.frontView);
+            if (swiped.get(movingItem.position)) {
+                posX -= calculateSwipedOffset(swipedToRight.get(movingItem.position));
+            }
             if ((currentMotion.toRight && targetX > 0 && posX < DISPLACE_CHOICE)
                     || (!currentMotion.toRight && targetX < 0 && posX > -DISPLACE_CHOICE)
                     || (currentMotion.toRight && targetX < DISPLACE_CHOICE)
                     || (!currentMotion.toRight && targetX > -DISPLACE_CHOICE)) {
-                movingItem.frontView.setTranslationX(targetX);
+                setTranslationX(movingItem.frontView, targetX);
             }
         } else {
-            movingItem.frontView.setTranslationX(targetX);
+            setTranslationX(movingItem.frontView, targetX);
         }
         listView.onMove(movingItem.position, targetX);
     }
@@ -1040,7 +976,6 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
         }, opts.animationTime + 100);
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void removePendingDismisses(int originalHeight) {
         // No active animations, process all pending dismisses.
         // Sort by descending position
@@ -1056,16 +991,14 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
         for (PendingDismissData pendingDismiss : pendingDismisses) {
             // Reset view presentation
             if (pendingDismiss.view != null) {
-                pendingDismiss.view.setAlpha(1f);
-                pendingDismiss.view.setTranslationX(0);
+                setAlpha(pendingDismiss.view, 1f);
+                setTranslationX(pendingDismiss.view, 0);
                 lp = pendingDismiss.view.getLayoutParams();
                 lp.height = originalHeight;
                 pendingDismiss.view.setLayoutParams(lp);
             }
         }
-
         resetPendingDismisses();
-
     }
 
     /**
@@ -1132,6 +1065,49 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
                 }
             });
         }
+    }
+
+    /*
+     * POSITIONING/ANIMATION LOW-LEVEL METHODS
+     */
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private static float getX(View v) {
+        return v.getX();
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private static void setTranslationX(View v, float translationX) {
+        v.setTranslationX(translationX);
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private static void setAlpha(View v, float alpha) {
+        v.setAlpha(alpha);
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
+    private static void animate(View v, float translationX, long animationTime,
+            final Runnable animationEndCallback) {
+        v.animate().translationX(translationX).setDuration(animationTime)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        animationEndCallback.run();
+                    }
+                });
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
+    private static void animate(View v, float translationX, float alpha, long animationTime,
+            final Runnable animationEndCallback) {
+        v.animate().translationX(translationX).alpha(alpha).setDuration(animationTime)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        animationEndCallback.run();
+                    }
+                });
     }
 
 }

@@ -2,11 +2,11 @@ package com.jbion.android.lib.list.swipe;
 
 public class BaseSwipeListViewListener implements SwipeListViewListener {
     @Override
-    public void onOpened(int position, boolean toRight) {
+    public void onSwiped(int position, boolean toRight) {
     }
 
     @Override
-    public void onClosed(int position, boolean fromRight) {
+    public void onUnswiped(int position, boolean fromRight) {
     }
 
     @Override

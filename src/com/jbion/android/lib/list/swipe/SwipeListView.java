@@ -125,9 +125,16 @@ public class SwipeListView extends PullToLoadListView {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        boolean res = touchListener.onTouch(this, ev);
+        boolean res = touchListener != null ? touchListener.onTouch(this, ev) : false;
         // execute super in any case (hence the order)
         return super.onTouchEvent(ev) || res;
+    }
+
+    @Override
+    protected void onHeaderPullStateChanged(boolean pullingOnHeader, State pullState) {
+        if (touchListener != null) {
+            touchListener.setEnabled(!pullingOnHeader);
+        }
     }
 
     /*
@@ -459,7 +466,7 @@ public class SwipeListView extends PullToLoadListView {
      */
     protected void onSwiped(int position, boolean toRight) {
         if (swipeListViewListener != null && position != ListView.INVALID_POSITION) {
-            swipeListViewListener.onOpened(position, toRight);
+            swipeListViewListener.onSwiped(position, toRight);
         }
     }
 
@@ -473,7 +480,7 @@ public class SwipeListView extends PullToLoadListView {
      */
     protected void onUnswiped(int position, boolean fromRight) {
         if (swipeListViewListener != null && position != ListView.INVALID_POSITION) {
-            swipeListViewListener.onClosed(position, fromRight);
+            swipeListViewListener.onUnswiped(position, fromRight);
         }
     }
 

@@ -70,7 +70,7 @@ public class PullToRefreshListView extends ListView {
     /**
      * Possible internal states for this {@link PullToRefreshListView}.
      */
-    private static enum State {
+    protected static enum State {
         PULL_TO_REFRESH,
         RELEASE_TO_REFRESH,
         REFRESHING
@@ -124,7 +124,7 @@ public class PullToRefreshListView extends ListView {
     private boolean scrollbarEnabled;
     private boolean scrollbarHidden = false;
 
-    private boolean pullingOnHeader;
+    private boolean pullingOnHeader = false;
     private float pullOrigin;
     private int headerTopMargin;
 
@@ -398,6 +398,9 @@ public class PullToRefreshListView extends ListView {
      *            The {@code State} to switch to.
      */
     private void setState(State state) {
+        if (state != this.state) {
+            onHeaderPullStateChanged(pullingOnHeader, state);
+        }
         this.state = state;
         switch (state) {
         case PULL_TO_REFRESH:
@@ -480,7 +483,7 @@ public class PullToRefreshListView extends ListView {
                     break;
                 }
                 // not pullingX anymore
-                pullingOnHeader = false;
+                setPullingOnHeader(false);
                 unhideScrollBar();
                 Log.v(LOG_TAG, "Header released");
             }
@@ -488,7 +491,7 @@ public class PullToRefreshListView extends ListView {
 
         case MotionEvent.ACTION_CANCEL:
             pushHeaderBack(true);
-            pullingOnHeader = false;
+            setPullingOnHeader(false);
             unhideScrollBar();
             Log.v(LOG_TAG, "Header pull canceled");
             break;
@@ -496,11 +499,11 @@ public class PullToRefreshListView extends ListView {
         case MotionEvent.ACTION_MOVE:
             if (getFirstVisiblePosition() > HEADER_POSITION) {
                 // header not visible
-                pullingOnHeader = false;
+                setPullingOnHeader(false);
                 unhideScrollBar();
             } else if (!isPullingOnHeader()) {
                 // header just got visible
-                pullingOnHeader = true;
+                setPullingOnHeader(true);
                 hideScrollBarTemporarily();
                 // remember starting position for pull distance
                 pullOrigin = event.getY();
@@ -555,6 +558,11 @@ public class PullToRefreshListView extends ListView {
         MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) header.getLayoutParams();
         mlp.setMargins(mlp.leftMargin, Math.round(margin), mlp.rightMargin, mlp.bottomMargin);
         header.setLayoutParams(mlp);
+    }
+
+    private void setPullingOnHeader(boolean pulling) {
+        pullingOnHeader = pulling;
+        onHeaderPullStateChanged(pulling, state);
     }
 
     private boolean isPullingOnHeader() {
@@ -635,6 +643,16 @@ public class PullToRefreshListView extends ListView {
             hasResetHeader = true;
         }
     }
+
+    /**
+     * Called when the header is pulled or not pulled anymore.
+     * 
+     * @param pullingOnHeader
+     *            whether the user is pulling on the header now.
+     * @param pullState
+     *            the current {@link State} of the header
+     */
+    protected void onHeaderPullStateChanged(boolean pullingOnHeader, State pullState) {}
 
     /**
      * Listens to global list animations. Hides the scrollbar during the animations.

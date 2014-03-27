@@ -10,14 +10,14 @@ public interface SwipeListViewListener {
      * @param position list item
      * @param toRight Open to right
      */
-    void onOpened(int position, boolean toRight);
+    void onSwiped(int position, boolean toRight);
 
     /**
      * Called when close animation finishes
      * @param position list item
      * @param fromRight Close from right
      */
-    void onClosed(int position, boolean fromRight);
+    void onUnswiped(int position, boolean fromRight);
 
     /**
      * Called when the list changed
