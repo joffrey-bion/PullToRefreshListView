@@ -98,7 +98,7 @@ public class SwipeListView extends PullToLoadListView {
 
         touchListener = new SwipeListViewTouchListener(this, opts);
         // super.setOnTouchListener(touchListener);
-        // super.setOnScrollListener(touchListener.makeScrollListener());
+        super.setOnScrollListener(touchListener.makeScrollListener());
     }
 
     /*

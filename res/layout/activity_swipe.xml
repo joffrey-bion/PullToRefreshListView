@@ -5,7 +5,7 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:background="#333333"
-    tools:context=".SwipeActivity" >
+    tools:context=".SampleActivity" >
 
     <com.jbion.android.lib.list.swipe.SwipeListView
         xmlns:swipe="http://schemas.android.com/apk/res-auto"
