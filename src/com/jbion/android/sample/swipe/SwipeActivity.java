@@ -10,7 +10,9 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
+import com.jbion.android.lib.list.pulltorefresh.PullToRefreshListView;
 import com.jbion.android.lib.list.swipe.SwipeListView;
 import com.jbion.android.pulltorefresh.R;
 
@@ -31,7 +33,12 @@ public class SwipeActivity extends ListActivity {
         ArrayAdapter<String> adapter = new MyAdapter(this, R.layout.swipe_item_view,
                 R.id.item_text, mListItems);
 
+        ListView list = getListView();
+        if (list instanceof PullToRefreshListView) {
+            ((PullToRefreshListView) list).setRefreshingHeaderEnabled(false);
+        }
         setListAdapter(adapter);
+        
     }
 
     @Override
@@ -50,7 +57,10 @@ public class SwipeActivity extends ListActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View v = super.getView(position, convertView, parent);
-            ((SwipeListView) getListView()).initSwipeState(v, position);
+            ListView list = getListView();
+            if (list instanceof SwipeListView) {
+                ((SwipeListView) list).initSwipeState(v, position);
+            }
             return v;
         }
     }

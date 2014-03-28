@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     tools:context=".SwipeActivity" >
 
+    <!--  
     <com.jbion.android.lib.list.swipe.SwipeListView
         xmlns:swipe="http://schemas.android.com/apk/res-auto"
         android:id="@+id/android:list"
@@ -18,5 +19,11 @@
         swipe:swipeOffsetRight="@dimen/item_height_3"
         swipe:closeAllItemsOnScroll="true"
         swipe:multipleSelectEnabled="false" />
+        -->
+        
+        <com.jbion.android.lib.list.pulltorefresh.PullToRefreshListView
+        android:id="@+id/android:list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>
