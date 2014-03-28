@@ -11,7 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.jbion.android.lib.list.pulltorefresh.OnPullToRefreshListener;
 import com.jbion.android.lib.list.pulltorefresh.PullToRefreshListView;
 import com.jbion.android.lib.list.swipe.SwipeListView;
 import com.jbion.android.pulltorefresh.R;
@@ -36,9 +38,16 @@ public class SwipeActivity extends ListActivity {
         ListView list = getListView();
         if (list instanceof PullToRefreshListView) {
             ((PullToRefreshListView) list).setRefreshingHeaderEnabled(false);
+            ((PullToRefreshListView) list)
+                    .setOnPullToRefreshListener(new OnPullToRefreshListener() {
+                        @Override
+                        public void onPullToRefresh() {
+                            Toast.makeText(SwipeActivity.this, "REFRESH", Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
         setListAdapter(adapter);
-        
+
     }
 
     @Override

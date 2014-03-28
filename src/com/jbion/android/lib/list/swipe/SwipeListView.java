@@ -129,12 +129,12 @@ public class SwipeListView extends PullToLoadListView {
         return super.onTouchEvent(ev) || res;
     }
 
-    @Override
-    protected void onHeaderPullStateChanged(boolean pullingOnHeader, State pullState) {
-        if (touchListener != null) {
-            touchListener.setSwipeEnabled(!pullingOnHeader);
-        }
-    }
+//    @Override
+//    protected void onHeaderPullStateChanged(boolean pullingOnHeader, State pullState) {
+//        if (touchListener != null) {
+//            touchListener.setSwipeEnabled(!pullingOnHeader);
+//        }
+//    }
 
     /*
      * USER METHODS

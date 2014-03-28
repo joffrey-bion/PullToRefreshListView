@@ -1,14 +1,16 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="#333333"
     tools:context=".SwipeActivity" >
 
-    <!--  
     <com.jbion.android.lib.list.swipe.SwipeListView
         xmlns:swipe="http://schemas.android.com/apk/res-auto"
         android:id="@+id/android:list"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         swipe:itemBackViewId="@+id/swipe_back_view"
         swipe:itemFrontViewId="@+id/swipe_front_view"
@@ -18,12 +20,7 @@
         swipe:swipeOffsetLeft="150dp"
         swipe:swipeOffsetRight="@dimen/item_height_3"
         swipe:closeAllItemsOnScroll="true"
-        swipe:multipleSelectEnabled="false" />
-        -->
-        
-        <com.jbion.android.lib.list.pulltorefresh.PullToRefreshListView
-        android:id="@+id/android:list"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        swipe:multipleSelectEnabled="false"
+        android:background="#3333FF" /> 
 
-</RelativeLayout>
+</LinearLayout>

@@ -2,13 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    android:background="#333333">
 
     <!-- We have to indicate that the listview is now a PullAndLoadListView -->
 
     <com.jbion.android.lib.list.pulltoloadmore.PullToLoadListView
         android:id="@+id/android:list"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+        android:layout_height="fill_parent"
+        android:background="#3333FF" />
 
 </LinearLayout>

@@ -2,13 +2,15 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/list_item"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:background="#33FF33" >
 
     <LinearLayout
         android:id="@+id/swipe_back_view"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/item_height"
         android:layout_gravity="right"
+        android:background="#FFCC33"
         android:orientation="horizontal"
         android:padding="0dp" >
 
@@ -44,15 +46,8 @@
         android:id="@+id/swipe_front_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_height"
-        android:background="#FFFFFF"
+        android:background="#FF3333"
         android:orientation="horizontal" >
-
-        <CheckBox
-            android:id="@+id/checkBox1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="" />
 
         <TextView
             android:id="@+id/item_text"

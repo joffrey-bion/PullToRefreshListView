@@ -22,7 +22,6 @@ import com.jbion.android.lib.list.pulltorefresh.OnPullToRefreshListener;
 import com.jbion.android.lib.list.pulltorefresh.PullToRefreshListView;
 import com.jbion.android.pulltorefresh.R;
 
-@SuppressWarnings("ucd")
 public class PullableListActivity extends ListActivity {
 
 	private static final String BASE_NAME = "Element ";
@@ -42,13 +41,13 @@ public class PullableListActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_pull_to_refresh);
+		setContentView(R.layout.activity_swipe);
 
 		mListItems = new LinkedList<String>();
 		addNewNames(oldest, newest);
 
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, mListItems);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.swipe_item_view,
+                R.id.item_text, mListItems);
 
 		setListAdapter(adapter);
 		setRefreshListeners();
