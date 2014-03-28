@@ -24,7 +24,7 @@ public class LoadableList extends LinkedList<String> {
 
     public LoadableList(int initialOldest, int initialNewest, int min, int max, int stepOld, int stepNew) {
         this.min = min;
-        this.max = max;
+        this.max = max + 1;
         this.stepOld = stepOld;
         this.stepNew = stepNew;
         oldest = initialOldest;

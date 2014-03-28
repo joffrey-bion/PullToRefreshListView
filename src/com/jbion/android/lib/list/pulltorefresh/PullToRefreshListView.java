@@ -228,7 +228,6 @@ public class PullToRefreshListView extends ListView {
      * Notifies this list that the user class is done refreshing the data.
      */
     public void onRefreshComplete() {
-        state = State.PULL_TO_REFRESH;
         pushHeaderBack(true);
         lastUpdated = System.currentTimeMillis();
     }
@@ -409,7 +408,8 @@ public class PullToRefreshListView extends ListView {
             text.setText(pullToRefreshText);
             if (showLastUpdatedText && lastUpdated != -1) {
                 lastUpdatedTextView.setVisibility(View.VISIBLE);
-                lastUpdatedTextView.setText(String.format(lastUpdatedText, lastUpdatedDateFormat.format(new Date(lastUpdated))));
+                lastUpdatedTextView.setText(String.format(lastUpdatedText,
+                        lastUpdatedDateFormat.format(new Date(lastUpdated))));
             }
             break;
 
@@ -450,10 +450,18 @@ public class PullToRefreshListView extends ListView {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (!ptrEnabled) {
+            // pull to refresh disabled
             return super.onTouchEvent(event);
         }
-        if (lockScrollWhileRefreshing && (state == State.REFRESHING || getAnimation() != null && !getAnimation().hasEnded())) {
-            // disable touch while refreshing/animating the list
+        if (lockScrollWhileRefreshing
+                && state == State.REFRESHING) {
+            // disable touch/scroll while refreshing the list
+            Log.w(LOG_TAG, "touch event ignored while refreshing");
+            return true;
+        }
+        if (getAnimation() != null && !getAnimation().hasEnded()) {
+            // disable touch/scroll while animating the list
+            Log.w(LOG_TAG, "touch event ignored while animating");
             return true;
         }
 
@@ -468,8 +476,8 @@ public class PullToRefreshListView extends ListView {
                         pushHeaderBack(true);
                     } else {
                         setState(State.REFRESHING);
-                        onRefreshListener.onPullToRefresh();
                         pushHeaderBack(!refreshingHeaderEnabled);
+                        onRefreshListener.onPullToRefresh();
                     }
                     break;
                 case PULL_TO_REFRESH:
@@ -482,7 +490,7 @@ public class PullToRefreshListView extends ListView {
                 // not pulling anymore
                 setPullingOnHeader(false);
                 unhideScrollBar();
-                Log.v(LOG_TAG, "Header released");
+                Log.d(LOG_TAG, "Header released");
             }
             break;
 
@@ -490,21 +498,24 @@ public class PullToRefreshListView extends ListView {
             pushHeaderBack(true);
             setPullingOnHeader(false);
             unhideScrollBar();
-            Log.v(LOG_TAG, "Header pull canceled");
+            Log.d(LOG_TAG, "Header pull canceled");
             break;
 
         case MotionEvent.ACTION_MOVE:
             if (getFirstVisiblePosition() > HEADER_POSITION) {
                 // header not visible
-                setPullingOnHeader(false);
-                unhideScrollBar();
-            } else if (!isPullingOnHeader()) {                
-                // header just got visible
+                if (isPullingOnHeader()) {
+                    setPullingOnHeader(false);
+                    unhideScrollBar();
+                }
+                break;
+            } else if (!isPullingOnHeader()) {
+                // user reached the top of the list and keeps pulling
                 setPullingOnHeader(true);
                 hideScrollBarTemporarily();
                 // remember starting position for pull distance
                 pullOrigin = event.getY();
-                Log.v(LOG_TAG, "Start pulling on header");
+                Log.d(LOG_TAG, "Start pulling on header");
             }
 
             if (isPullingOnHeader()) {
@@ -513,7 +524,8 @@ public class PullToRefreshListView extends ListView {
                 float relativeY = absoluteY - pullOrigin;
                 relativeY /= PULL_RESISTANCE;
 
-                int newHeaderMargin = Math.max(Math.round(relativeY) - header.getHeight(), -header.getHeight());
+                int newHeaderMargin = Math.max(Math.round(relativeY) - header.getHeight(),
+                        -header.getHeight());
 
                 if (newHeaderMargin != headerTopMargin && state != State.REFRESHING) {
                     // update margin for the pull effect
@@ -521,25 +533,26 @@ public class PullToRefreshListView extends ListView {
 
                     if (state == State.PULL_TO_REFRESH && headerTopMargin > pullThreshold) {
                         // header pulled beyond the threshold
-                        Log.v(LOG_TAG, "Pull threshold exceeded");
+                        Log.d(LOG_TAG, "Pull threshold exceeded");
                         setState(State.RELEASE_TO_REFRESH);
                         image.clearAnimation();
                         image.startAnimation(ccwRotation);
                     } else if (state == State.RELEASE_TO_REFRESH && headerTopMargin < pullThreshold) {
                         // header pushed back below the threshold
-                        Log.v(LOG_TAG, "Push back threshold");
+                        Log.d(LOG_TAG, "Push back threshold");
                         setState(State.PULL_TO_REFRESH);
                         image.clearAnimation();
                         image.startAnimation(cwRotation);
                     }
 
                     // hack to disable scrolling while pushing back up
-                    setSelection(0);
+                    setSelection(HEADER_POSITION);
+                    // TODO find something cleaner (return true does not work)
                 }
+                return super.onTouchEvent(event) || true;
+            } else {
+                break;
             }
-            // XXX functional change: used to be "break;"
-            return super.onTouchEvent(event) || true;
-            //break;
         }
         return super.onTouchEvent(event);
     }
@@ -600,11 +613,16 @@ public class PullToRefreshListView extends ListView {
      *            reset).
      */
     private void pushHeaderBack(boolean allTheWayAndReset) {
-        if (getFirstVisiblePosition() > 0) {
+        if (getFirstVisiblePosition() > HEADER_POSITION) {
             // header not visible, no animation needed
             if (allTheWayAndReset) {
                 resetHeader();
             }
+            return;
+        }
+        if (getAnimation() != null && !getAnimation().hasEnded()) {
+            // animation already in progress
+            Log.w(LOG_TAG, "trying to launch two push-back animations at the same time");
             return;
         }
         int yTranslate = allTheWayAndReset ? -headerContainer.getHeight()
@@ -677,6 +695,7 @@ public class PullToRefreshListView extends ListView {
             height = lp.height;
             lp.height = getHeight() + Math.abs(translation);
             setLayoutParams(lp);
+            Log.w(LOG_TAG, "added height");
 
             hideScrollBarTemporarily();
         }
@@ -693,6 +712,7 @@ public class PullToRefreshListView extends ListView {
             android.view.ViewGroup.LayoutParams lp = getLayoutParams();
             lp.height = height;
             setLayoutParams(lp);
+            Log.w(LOG_TAG, "reset height");
 
             unhideScrollBar();
 

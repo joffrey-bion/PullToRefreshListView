@@ -30,9 +30,11 @@ public class SampleActivity extends ListActivity {
     public static final boolean PULL_TO_REFRESH = true;
     public static final boolean PULL_TO_LOAD = true;
 
-    private static final int MAX = 120;
+    private static final int MAX = 40;
     private static final int MIN = 0;
     private static final int STEP = 3;
+    private static final int INIT_LOW = 20;
+    private static final int INIT_HIGH = 24;
 
     // list with the data to show in the listview
     private LoadableList mListItems;
@@ -43,7 +45,7 @@ public class SampleActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swipe);
-        mListItems = new LoadableList(55, 57, MIN, MAX, STEP, STEP);
+        mListItems = new LoadableList(INIT_LOW, INIT_HIGH, MIN, MAX, STEP, STEP);
         mAdapter = createAdapter(mListItems);
         setListAdapter(mAdapter);
         setRefreshListeners();
