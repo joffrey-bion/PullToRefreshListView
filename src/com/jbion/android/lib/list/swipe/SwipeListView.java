@@ -45,6 +45,8 @@ public class SwipeListView extends PullToLoadListView {
     // TODO notify this listener in our private scroll listener
     private OnScrollListener userScrollListener;
 
+    private boolean superTouchEventsEnabled = true;
+
     /**
      * If you create a SwipeListView programmatically you need to specifiy back and
      * front identifier.
@@ -126,15 +128,15 @@ public class SwipeListView extends PullToLoadListView {
     public boolean onTouchEvent(MotionEvent ev) {
         boolean res = touchListener != null ? touchListener.onTouch(this, ev) : false;
         // execute super in any case (hence the order)
-        return super.onTouchEvent(ev) || res;
+        return superTouchEventsEnabled && super.onTouchEvent(ev) || res;
     }
 
-//    @Override
-//    protected void onHeaderPullStateChanged(boolean pullingOnHeader, State pullState) {
-//        if (touchListener != null) {
-//            touchListener.setSwipeEnabled(!pullingOnHeader);
-//        }
-//    }
+    @Override
+    protected void onHeaderPullStateChanged(boolean pullingOnHeader, State pullState) {
+        if (touchListener != null) {
+            touchListener.setSwipeEnabled(!pullingOnHeader);
+        }
+    }
 
     /*
      * USER METHODS
@@ -542,5 +544,9 @@ public class SwipeListView extends PullToLoadListView {
         if (swipeListViewListener != null && position != ListView.INVALID_POSITION) {
             swipeListViewListener.onMove(position, x);
         }
+    }
+
+    public void disableSuperTouchEvent(boolean disable) {
+        this.superTouchEventsEnabled = !disable;
     }
 }

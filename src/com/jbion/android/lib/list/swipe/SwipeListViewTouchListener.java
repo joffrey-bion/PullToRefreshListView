@@ -734,7 +734,7 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
                 continue; // not this one, keep searching
             }
             int touchedItemPosition = listView.getPositionForView(item);
-            // don't allow pullingX if this is on the header or footer or
+            // don't allow pulling if this is on the header or footer or
             // IGNORE_ITEM_VIEW_TYPE or disabled item
             ListAdapter adapter = listView.getAdapter();
             if (adapter.isEnabled(touchedItemPosition)
@@ -758,7 +758,7 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
 
     private void initCurrentMotion(MotionEvent motionEvent) {
         currentAction = SwipeOptions.ACTION_NONE;
-        currentMotion.pullingX = false;
+        currentMotion.setPulling(false);
         currentMotion.downX = motionEvent.getX();
         boolean itemLoaded = initMovingItem(motionEvent);
         if (itemLoaded) {
@@ -768,7 +768,7 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
     }
 
     private void updateCurrentAction() {
-        if (!currentMotion.pullingX) {
+        if (!currentMotion.isPulling()) {
             currentAction = SwipeOptions.ACTION_NONE;
         }
         if (swiped.get(movingItem.position)) {
@@ -812,7 +812,7 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
     }
 
     private void cancelMotionAndReset() {
-        if (currentMotion.pullingX) {
+        if (currentMotion.isPulling()) {
             animateMovingItem(false, false);
         }
         currentMotion.reset();
@@ -862,13 +862,13 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
             }
 
             // switch to pulling state if relevant
-            if (!currentMotion.pullingX) {
+            if (!currentMotion.isPulling()) {
                 currentMotion.tracker.computeCurrentVelocity(1000);
                 float velocityX = Math.abs(currentMotion.tracker.getXVelocity());
                 float velocityY = Math.abs(currentMotion.tracker.getYVelocity());
 
                 if (Math.abs(deltaX) > slop && velocityY < velocityX) {
-                    currentMotion.pullingX = true;
+                    currentMotion.setPulling(true);
                     Log.i(LOG_TAG, "Start pulling item " + movingItem.position + " towards "
                             + (currentMotion.toRight ? "right" : "left"));
                     // TODO shouldn't be here
@@ -877,7 +877,7 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
             }
 
             // update front view position
-            if (currentMotion.pullingX) {
+            if (currentMotion.isPulling()) {
                 float targetX = deltaX;
                 if (swiped.get(movingItem.position)) {
                     targetX += getSwipedOffset(swipedToRight.get(movingItem.position));
@@ -892,7 +892,7 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
         }
 
         case MotionEvent.ACTION_UP: {
-            if (!currentMotion.pullingX || movingItem.position == AdapterView.INVALID_POSITION) {
+            if (!currentMotion.isPulling() || movingItem.position == AdapterView.INVALID_POSITION) {
                 Log.v(LOG_TAG, "onTouch UP returns false");
                 // we were not following this event
                 return false;
@@ -924,6 +924,7 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
             if (currentAction == SwipeOptions.ACTION_CHOICE) {
                 swapCheckedState(movingItem.position);
             }
+            
             currentMotion.reset();
             movingItem.reset();
             Log.v(LOG_TAG, "onTouch UP returns true");
@@ -1063,11 +1064,20 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
         float lastX;
         float lastY;
 
-        boolean pullingX;
+        private boolean pulling;
         boolean toRight;
         VelocityTracker tracker;
+        
+        public boolean isPulling() {
+            return pulling;
+        }
 
-        private boolean isValidXFling() {
+        public void setPulling(boolean pulling) {
+            this.pulling = pulling;
+            listView.disableSuperTouchEvent(pulling);
+        }
+
+        public boolean isValidXFling() {
             float velocityX = Math.abs(tracker.getXVelocity());
             float velocityY = Math.abs(tracker.getYVelocity());
             if (velocityX < minFlingVelocity || velocityX > maxFlingVelocity
@@ -1101,7 +1111,7 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
 
         public void reset() {
             downX = 0;
-            pullingX = false;
+            setPulling(false);
             if (tracker != null) {
                 tracker.recycle();
                 tracker = null;

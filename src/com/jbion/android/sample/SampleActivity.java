@@ -51,11 +51,12 @@ public class SampleActivity extends ListActivity {
     }
 
     private ArrayAdapter<String> createAdapter(LoadableList list) {
-        if (getListView() instanceof SwipeListView) {
-            return new SwipeAdapter(this, R.layout.swipe_item_view, R.id.item_text, list);
-        } else {
-            return new ArrayAdapter<String>(this, R.layout.swipe_item_view, R.id.item_text, list);
+        if (SWIPE) {
+            if (getListView() instanceof SwipeListView) {
+                return new SwipeAdapter(this, R.layout.swipe_item_view, R.id.item_text, list);
+            }
         }
+        return new ArrayAdapter<String>(this, R.layout.swipe_item_view, R.id.item_text, list);
     }
 
     private void setRefreshListeners() {

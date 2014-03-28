@@ -124,7 +124,6 @@ public class PullToRefreshListView extends ListView {
     private boolean scrollbarEnabled;
     private boolean scrollbarHidden = false;
 
-    // XXX functional change: wasn't initialized
     private boolean pullingOnHeader = false;
     private float pullOrigin;
     private int headerTopMargin;
@@ -399,7 +398,6 @@ public class PullToRefreshListView extends ListView {
      *            The {@code State} to switch to.
      */
     private void setState(State state) {
-        // XXX functional change: this was not notified before
         if (state != this.state) {
             onHeaderPullStateChanged(pullingOnHeader, state);
         }
@@ -489,7 +487,6 @@ public class PullToRefreshListView extends ListView {
             break;
 
         case MotionEvent.ACTION_CANCEL:
-            // XXX functional change: this call wasn't here
             pushHeaderBack(true);
             setPullingOnHeader(false);
             unhideScrollBar();
@@ -501,13 +498,13 @@ public class PullToRefreshListView extends ListView {
                 // header not visible
                 setPullingOnHeader(false);
                 unhideScrollBar();
-            } else if (!isPullingOnHeader()) {
+            } else if (!isPullingOnHeader()) {                
                 // header just got visible
                 setPullingOnHeader(true);
                 hideScrollBarTemporarily();
                 // remember starting position for pull distance
                 pullOrigin = event.getY();
-                Log.v(LOG_TAG, "Start pullingX on header");
+                Log.v(LOG_TAG, "Start pulling on header");
             }
 
             if (isPullingOnHeader()) {
@@ -563,7 +560,6 @@ public class PullToRefreshListView extends ListView {
 
     private void setPullingOnHeader(boolean pulling) {
         pullingOnHeader = pulling;
-        // XXX functional change: this call was not here
         onHeaderPullStateChanged(pulling, state);
     }
 
