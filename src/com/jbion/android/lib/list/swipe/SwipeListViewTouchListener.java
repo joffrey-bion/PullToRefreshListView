@@ -586,10 +586,6 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
             final int position) {
         final boolean isOpen = swiped.get(position);
 
-        if (!opts.multipleSelectEnabled && changeState && !isOpen) {
-            unswipeAllItems();
-        }
-
         int moveTo = changeState ^ isOpen ? getSwipedOffset(toRight) : 0;
 
         animate(view, moveTo, opts.animationTime, new Runnable() {
@@ -869,6 +865,9 @@ class SwipeListViewTouchListener implements View.OnTouchListener {
 
                 if (Math.abs(deltaX) > slop && velocityY < velocityX) {
                     currentMotion.setPulling(true);
+                    if (!opts.multipleSelectEnabled) {
+                        unswipeAllItems();
+                    }
                     Log.i(LOG_TAG, "Start pulling item " + movingItem.position + " towards "
                             + (currentMotion.toRight ? "right" : "left"));
                     // TODO shouldn't be here
