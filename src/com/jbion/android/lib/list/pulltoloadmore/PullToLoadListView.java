@@ -85,6 +85,7 @@ public class PullToLoadListView extends PullToRefreshListView implements OnScrol
      */
     public void onLoadingComplete() {
         mIsLoadingMore = false;
+        progressBar.setVisibility(View.GONE);
     }
 
     /**
