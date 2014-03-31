@@ -707,30 +707,27 @@ public class PullToRefreshListView extends ListView {
             height = lp.height;
             lp.height = getHeight() + Math.abs(translation);
             setLayoutParams(lp);
-            Log.w(LOG_TAG, "added height");
 
             hideScrollBarTemporarily();
         }
 
         @Override
         public void onAnimationEnd(Animation animation) {
-            // cut the margin that's now hidden
-            setHeaderMargin(stateAtAnimationStart == State.REFRESHING && refreshingHeaderEnabled ? 0
-                    : -measuredHeaderHeight - headerContainer.getTop());
-
-            setSelection(FIRST_ITEM_POSITION);
+            if (resetAfterAnimation) {
+                resetHeader();
+                setSelection(FIRST_ITEM_POSITION);
+            } else {
+                // cut the margin that's now hidden
+                setHeaderMargin(stateAtAnimationStart == State.REFRESHING && refreshingHeaderEnabled ? 0 : -measuredHeaderHeight - headerContainer.getTop());
+                setSelection(HEADER_POSITION);
+            }
 
             // restore this ListView's height
             android.view.ViewGroup.LayoutParams lp = getLayoutParams();
             lp.height = height;
             setLayoutParams(lp);
-            Log.w(LOG_TAG, "reset height");
 
             unhideScrollBar();
-
-            if (resetAfterAnimation) {
-                resetHeader();
-            }
         }
 
         @Override
