@@ -15,10 +15,10 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.jbion.android.lib.list.pulltoloadmore.OnPullToLoadMoreListener;
 import com.jbion.android.lib.list.pulltoloadmore.PullToLoadListView;
-import com.jbion.android.lib.list.pulltorefresh.OnPullToRefreshListener;
+import com.jbion.android.lib.list.pulltoloadmore.PullToLoadListView.OnPullToLoadMoreListener;
 import com.jbion.android.lib.list.pulltorefresh.PullToRefreshListView;
+import com.jbion.android.lib.list.pulltorefresh.PullToRefreshListView.OnPullToRefreshListener;
 import com.jbion.android.lib.list.swipe.SwipeListView;
 import com.jbion.android.pulltorefresh.R;
 import com.jbion.android.sample.pulltorefresh.LoadableList;

@@ -50,6 +50,18 @@ import com.jbion.android.pulltorefresh.R;
 public class PullToRefreshListView extends ListView {
 
     private static final String LOG_TAG = PullToRefreshListView.class.getSimpleName();
+    
+    /**
+     * Interface to implement when you want to get notified of 'pull to refresh'
+     * events. Call setOnRefreshListener(..) to activate an OnPullToRefreshListener.
+     */
+    public static interface OnPullToRefreshListener {
+
+        /**
+         * Called when a refresh is requested.
+         */
+        public void onPullToRefresh();
+    }
 
     private static final float PULL_RESISTANCE = 1.7f;
 

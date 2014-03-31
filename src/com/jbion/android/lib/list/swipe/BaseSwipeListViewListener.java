@@ -18,14 +18,6 @@ public class BaseSwipeListViewListener implements SwipeListViewListener {
     }
 
     @Override
-    public void onClickFrontView(int position) {
-    }
-
-    @Override
-    public void onClickBackView(int position) {
-    }
-
-    @Override
     public void onDismiss(int[] reverseSortedPositions) {
     }
 

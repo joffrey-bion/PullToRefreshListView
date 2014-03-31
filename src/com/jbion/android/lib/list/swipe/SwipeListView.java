@@ -100,14 +100,14 @@ public class SwipeListView extends PullToLoadListView {
         }
 
         touchListener = new SwipeListViewTouchListener(this, opts);
-        
+
         super.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int scrollState) {
-                
+
                 // block swipe while scrolling
                 setSwipeEnabled(scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE);
-                
+
                 // unswipe all items if scrolling
                 if (scrollState == SCROLL_STATE_TOUCH_SCROLL || scrollState == SCROLL_STATE_FLING) {
                     if (opts.closeAllItemsOnScroll && touchListener != null) {
@@ -126,7 +126,8 @@ public class SwipeListView extends PullToLoadListView {
                     int totalItemCount) {
                 // pass on the event
                 if (userScrollListener != null) {
-                    userScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+                    userScrollListener.onScroll(view, firstVisibleItem, visibleItemCount,
+                            totalItemCount);
                 }
             }
         });
@@ -315,14 +316,16 @@ public class SwipeListView extends PullToLoadListView {
     public void setAdapter(ListAdapter adapter) {
         super.setAdapter(adapter);
         touchListener.resetItems();
-        adapter.registerDataSetObserver(new DataSetObserver() {
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                onListChanged();
-                touchListener.resetItems();
-            }
-        });
+        if (adapter != null) {
+            adapter.registerDataSetObserver(new DataSetObserver() {
+                @Override
+                public void onChanged() {
+                    super.onChanged();
+                    onListChanged();
+                    touchListener.resetItems();
+                }
+            });
+        }
     }
 
     @Override
@@ -474,30 +477,6 @@ public class SwipeListView extends PullToLoadListView {
     protected void onDismiss(int[] reverseSortedPositions) {
         if (swipeListViewListener != null) {
             swipeListViewListener.onDismiss(reverseSortedPositions);
-        }
-    }
-
-    /**
-     * Notifies onClickFrontView
-     * 
-     * @param position
-     *            item clicked
-     */
-    protected void onClickFrontView(int position) {
-        if (swipeListViewListener != null && position != ListView.INVALID_POSITION) {
-            swipeListViewListener.onClickFrontView(position);
-        }
-    }
-
-    /**
-     * Notifies onClickBackView
-     * 
-     * @param position
-     *            back item clicked
-     */
-    protected void onClickBackView(int position) {
-        if (swipeListViewListener != null && position != ListView.INVALID_POSITION) {
-            swipeListViewListener.onClickBackView(position);
         }
     }
 
