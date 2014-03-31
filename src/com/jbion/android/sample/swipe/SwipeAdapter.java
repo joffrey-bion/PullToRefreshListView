@@ -4,10 +4,13 @@ import java.util.List;
 
 import android.content.Context;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.jbion.android.lib.list.swipe.SwipeListView;
+import com.jbion.android.pulltorefresh.R;
 
 public class SwipeAdapter extends ArrayAdapter<String> {
 
@@ -21,6 +24,27 @@ public class SwipeAdapter extends ArrayAdapter<String> {
         if (parent instanceof SwipeListView) {
             ((SwipeListView) parent).initSwipeState(v, position);
         }
+        v.findViewById(R.id.button1).setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Button 1 clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+        v.findViewById(R.id.button2).setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Button 2 clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+        v.findViewById(R.id.button3).setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Button 3 clicked", Toast.LENGTH_SHORT).show();;
+            }
+        });
         return v;
     }
 }
