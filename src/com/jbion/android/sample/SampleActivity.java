@@ -67,6 +67,7 @@ public class SampleActivity extends ListActivity {
         if (list instanceof SwipeListView) {
             SwipeListView sl = (SwipeListView) list;
             sl.setSwipeEnabled(SWIPE);
+            sl.setOpenOnLongClick(true);
         }
 
         if (list instanceof PullToRefreshListView) {

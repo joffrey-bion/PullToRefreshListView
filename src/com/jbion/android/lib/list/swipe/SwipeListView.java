@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -99,8 +100,36 @@ public class SwipeListView extends PullToLoadListView {
         }
 
         touchListener = new SwipeListViewTouchListener(this, opts);
-        // super.setOnTouchListener(touchListener);
-        super.setOnScrollListener(touchListener.makeScrollListener());
+        
+        super.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+                
+                // block swipe while scrolling
+                setSwipeEnabled(scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE);
+                
+                // unswipe all items if scrolling
+                if (scrollState == SCROLL_STATE_TOUCH_SCROLL || scrollState == SCROLL_STATE_FLING) {
+                    if (opts.closeAllItemsOnScroll && touchListener != null) {
+                        Log.i(LOG_TAG, "Unswiping all items on scroll event");
+                        touchListener.unswipeAllItems();
+                    }
+                }
+                // pass on the event
+                if (userScrollListener != null) {
+                    userScrollListener.onScrollStateChanged(absListView, scrollState);
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
+                    int totalItemCount) {
+                // pass on the event
+                if (userScrollListener != null) {
+                    userScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+                }
+            }
+        });
     }
 
     /*
@@ -115,6 +144,9 @@ public class SwipeListView extends PullToLoadListView {
         boolean customIntercept = false;
         if (isEnabled()) {
             customIntercept = touchListener.shouldIntercept(ev);
+        }
+        if (customIntercept) {
+            Log.i(LOG_TAG, "SWIPE INTERCEPTS TOUCH EVENTS (scroll)");
         }
         boolean superIntercept = super.onInterceptTouchEvent(ev);
         // execute super in any case (hence the order)
@@ -302,6 +334,12 @@ public class SwipeListView extends PullToLoadListView {
      * OPTIONS SETTERS
      */
 
+    /**
+     * Enables or disables the swipe feature.
+     * 
+     * @param enabled
+     *            {@code true} to enable, {@code false} to disable.
+     */
     public void setSwipeEnabled(boolean enabled) {
         if (touchListener != null) {
             touchListener.setSwipeEnabled(enabled);
