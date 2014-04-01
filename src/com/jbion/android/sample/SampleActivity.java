@@ -74,7 +74,7 @@ public class SampleActivity extends ListActivity {
             final PullToRefreshListView ptr = (PullToRefreshListView) list;
 
             ptr.setPullToRefreshEnabled(PULL_TO_REFRESH);
-            ptr.setRefreshingHeaderEnabled(false);
+            ptr.setRefreshingHeaderEnabled(true);
             ptr.setLockScrollWhileRefreshing(false);
             ptr.showLastUpdatedText(true);
             ptr.setLastUpdatedDateFormat(new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale

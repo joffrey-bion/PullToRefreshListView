@@ -240,8 +240,10 @@ public class PullToRefreshListView extends ListView {
      * Notifies this list that the user class is done refreshing the data.
      */
     public void onRefreshComplete() {
-        pushHeaderBack(true);
         lastUpdated = System.currentTimeMillis();
+        if (!isPullingOnHeader()) {
+            pushHeaderBack(true);
+        }
     }
 
     /*
