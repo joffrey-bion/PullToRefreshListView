@@ -22,6 +22,8 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 
 import com.jbion.android.pulltorefresh.R;
 
@@ -763,7 +765,7 @@ public class PullToRefreshListView extends ListView {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
             hasResetHeader = false;
-            if (userOnItemClickListener != null) {
+            if (userOnItemClickListener != null && position > HEADER_POSITION) {
                 userOnItemClickListener.onItemClick(adapterView, view, position - 1, id);
             }
         }
@@ -777,9 +779,8 @@ public class PullToRefreshListView extends ListView {
         @Override
         public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
             hasResetHeader = false;
-            if (userOnItemLongClickListener != null) {
-                return userOnItemLongClickListener.onItemLongClick(adapterView, view, position - 1,
-                        id);
+            if (userOnItemLongClickListener != null && position > HEADER_POSITION) {
+                return userOnItemLongClickListener.onItemLongClick(adapterView, view, position - 1, id);
             }
             return false;
         }
