@@ -5,6 +5,7 @@ import java.util.List;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.DataSetObserver;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -47,6 +48,8 @@ public class SwipeListView extends PullToLoadListView {
     private OnScrollListener userScrollListener;
 
     private boolean superTouchEventsEnabled = true;
+
+    private boolean swipeEnabled;
 
     /**
      * If you create a SwipeListView programmatically you need to specifiy back and
@@ -98,7 +101,8 @@ public class SwipeListView extends PullToLoadListView {
             opts.set(getContext(), styled);
             styled.recycle();
         }
-
+        
+        swipeEnabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
         touchListener = new SwipeListViewTouchListener(this, opts);
 
         super.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -106,7 +110,10 @@ public class SwipeListView extends PullToLoadListView {
             public void onScrollStateChanged(AbsListView absListView, int scrollState) {
 
                 // block swipe while scrolling
-                setSwipeEnabled(scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE);
+                if (touchListener != null) {
+                    touchListener.setSwipeEnabled(swipeEnabled
+                            && scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE);
+                }
 
                 // unswipe all items if scrolling
                 if (scrollState == SCROLL_STATE_TOUCH_SCROLL || scrollState == SCROLL_STATE_FLING) {
@@ -344,6 +351,7 @@ public class SwipeListView extends PullToLoadListView {
      *            {@code true} to enable, {@code false} to disable.
      */
     public void setSwipeEnabled(boolean enabled) {
+        swipeEnabled = enabled;
         if (touchListener != null) {
             touchListener.setSwipeEnabled(enabled);
         }
